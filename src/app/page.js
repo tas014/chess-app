@@ -9,16 +9,3 @@ export default function Home() {
     </main>
   )
 }
-
-class Person {
-  introduceSelf() {
-    console.log("Buenas Tardes!")
-  }
-}
-
-class Professor extends Person {
-  introduceSelf() {
-    console.log("Sobreescrito! Ahora digo Buenas Noches!")
-  }
-}
-// al asignar a una subclase un método con el mismo nombre que un método heredado, se sobreescribe dando prioridad al método declarado en la subclase!
