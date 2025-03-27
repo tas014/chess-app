@@ -1,0 +1,45 @@
+.boardRow,
+.darkSquare,
+.lightSquare {
+    display: flex;
+}
+
+.darkSquare,
+.lightSquare {
+    height: 7em;
+    width: 7em;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.darkSquare {
+    background-color: #442274;
+    color: #b7faf2
+}
+
+.lightSquare {
+    background-color: #729d98;
+    color: #442274
+}
+
+.takeable {
+    background-color: rgba(201, 43, 35, 0.6);
+}
+
+.square,
+.takeable {
+    margin: auto;
+}
+
+.pieceIcon {
+    height: 60%;
+    width: 60%;
+}
+
+.legalMove {
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background-color: rgba(11, 48, 96, 0.3);
+}
