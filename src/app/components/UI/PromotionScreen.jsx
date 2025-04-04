@@ -1,6 +1,7 @@
 import { FaChessKnight, FaChessBishop, FaChessRook, FaChessQueen } from "react-icons/fa6";
 
 const PromotionScreen = ({ handleSpecialMove, matrix, eventMove }) => {
+    eventMove.event = "promotion";
     return (
         <div className="promotion_container">
             <div>

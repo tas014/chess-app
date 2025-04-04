@@ -1,7 +1,7 @@
 'use client'
 import styles from './board.module.css';
 import BoardSquare from './BoardSquare';
-import PromotionMenu from './PromotionMenu';
+import PromotionScreen from '../UI/PromotionScreen';
 import { generateLegalMoves, isGameOver } from '../gameMechanics/pieceLogic';
 import { useState } from 'react';
 
@@ -17,11 +17,9 @@ const defaultBoardPosition = [
     [6, 3, 4, 9, 8, 4, 3, 6]
 ]
 
-const Board = () => {
+const Board = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
     const [selectedPiece, setSelectedPiece] = useState(null);
-    const [turn, setTurn] = useState(true);
     const [isPromoting, setIsPromoting] = useState(false);
-    const [gameStillOn, setGameStillOn] = useState(true);
     const [boardEvent, setBoardEvent] = useState(null); /*
         [{  event: 'key',
             x: num,
@@ -31,11 +29,12 @@ const Board = () => {
     */
     const [jumpedPawn, setJumpedPawn] = useState([]);
     const [gameMatrix, setGameMatrix] = useState(defaultBoardPosition)
-    const matrixSize = Array.from(Array(8).keys());
-    const promotion = useState({
-        square: null,
-        color: null
+    const [currentEvent, setCurrentEvent] = useState({
+        currentSquare: null,
+        previousSquare: null,
+        event: null
     })
+    const matrixSize = Array.from(Array(8).keys());
     //Transfer all the piece representation into a matrix that gets updated so the content updates with it automatically
 
     const generateSquareColor = (row, square) => {
@@ -164,18 +163,21 @@ const Board = () => {
 
         } else { //and if there are special moves...
             //Handle them accordingly
-            console.log(event)
             handleSpecialMove(newGameMatrix, { currentSquare, previousSquare, event })
+            setCurrentEvent({currentSquare, previousSquare, event});
+        }
+        if (!event || event !== 'promotion'){
+            setSelectedPiece(null);
         }
         clearLegalMoves();
         setGameMatrix(newGameMatrix);
-        setSelectedPiece(null);
     }
 
     const handleSpecialMove = (matrix, eventMove, promotingPiece = false) => {
         const { currentSquare, previousSquare, event } = eventMove;
 
         const updateBoard = (newPiece = false) => {
+            console.log(newPiece);
             if (!newPiece) {
                 matrix[currentSquare.x][currentSquare.y] = matrix[previousSquare.x][previousSquare.y];
                 matrix[previousSquare.x][previousSquare.y] = 0;
@@ -195,12 +197,14 @@ const Board = () => {
 
             case 'promotion':
                 //queeningPiece = matrix[previousSquare.x][previousSquare.y] > 0 ? 9 : -9;
-                if (promotingPiece) {
-                    queeningPiece = matrix[previousSquare.x][previousSquare.y] > 0 ? promotingPiece : -promotingPiece
-                    updateBoard(queeningPiece);
-                }
                 setIsPromoting(!isPromoting);
                 setGameStillOn(!gameStillOn);
+                if (promotingPiece) {
+                    console.log(matrix[previousSquare.x][previousSquare.y]);
+                    queeningPiece = matrix[previousSquare.x][previousSquare.y] > 0 ? promotingPiece : -(promotingPiece)
+                    updateBoard(queeningPiece);
+                    setSelectedPiece(null);
+                }
                 break;
 
             case 'castlesShort':
@@ -221,13 +225,6 @@ const Board = () => {
                 break;
         }
         //console.log(matrix, currentSquare, previousSquare, event);
-    }
-
-    const handlePromotion = (square, color) => {
-        let resolve, reject;
-        const promotingPiece = new Promise((res, rej) => {
-
-        })
     }
 
     const idToMatrixPos = id => {
@@ -260,19 +257,22 @@ const Board = () => {
     }
 
     return (
-        <table>
+        <div>
             {!gameStillOn && isPromoting ?
                 <div className='promotion_container'>
-                    <div>
-
-                    </div>
+                    <PromotionScreen 
+                        handleSpecialMove={handleSpecialMove} 
+                        matrix={gameMatrix}
+                        eventMove={currentEvent}    
+                    />
                 </div>
-                : null}
-            <tbody>
-                {generateBoard(matrixSize)}
-            </tbody>
-            <PromotionMenu color={turn} />
-        </table>
+            : null}
+            <table>
+                <tbody>
+                    {generateBoard(matrixSize)}
+                </tbody>
+            </table>
+        </div>
     )
 }
 

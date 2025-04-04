@@ -77,7 +77,12 @@ const BoardSquare = ({ onSquareClick, squareID, styleData, pos, boardData }) => 
   }
 
   return (
-    <td className={`${squareColor} ${takeablePiece(Math.abs(boardData[pos.x][pos.y])) ? styles.takeable : styles.square}`} onClick={e => onSquareClick(e.currentTarget)} id={squareID}>{setContent(pos.x, pos.y)}</td>
+    <td 
+    className={`${squareColor} ${takeablePiece(Math.abs(boardData[pos.x][pos.y])) ? styles.takeable : styles.square}`} 
+    onClick={e => onSquareClick(e.currentTarget)} 
+    id={squareID}>
+      {setContent(pos.x, pos.y)}
+    </td>
   )
 }
 
