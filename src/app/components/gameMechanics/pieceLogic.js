@@ -104,7 +104,8 @@ const generatePawnMoves = (piece, board, color, scan = false) => {
                     if (board[piece.x][piece.y + 1] === (-7)) {
                         moves.push({
                             x: piece.x - 1,
-                            y: piece.y + 1
+                            y: piece.y + 1,
+                            event: 'enPassant'
                         })
                     }
                 }
@@ -115,7 +116,8 @@ const generatePawnMoves = (piece, board, color, scan = false) => {
                     if (board[piece.x][piece.y - 1] === (-7)) {
                         moves.push({
                             x: piece.x - 1,
-                            y: piece.y - 1
+                            y: piece.y - 1,
+                            event: 'enPassant'
                         })
                     }
                 }
@@ -213,7 +215,8 @@ const generatePawnMoves = (piece, board, color, scan = false) => {
                     if (board[piece.x][piece.y + 1] === (7)) {
                         moves.push({
                             x: piece.x + 1,
-                            y: piece.y + 1
+                            y: piece.y + 1,
+                            event: 'enPassant'
                         })
                     }
                 }
@@ -224,7 +227,8 @@ const generatePawnMoves = (piece, board, color, scan = false) => {
                     if (board[piece.x][piece.y - 1] === (7)) {
                         moves.push({
                             x: piece.x + 1,
-                            y: piece.y - 1
+                            y: piece.y - 1,
+                            event: 'enPassant'
                         })
                     }
                 }
