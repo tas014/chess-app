@@ -1,19 +1,27 @@
+import Board from "../Board";
+
 class Piece {
     #name;
     #notationKey;
     #color; 
-    #board; 
+    #board;
     #hasMoved;
+    #handler;
     #canBeTaken = false;
-    constructor (name, notationKey = "" ,color, board) {
+    #isSelected = false;
+    constructor (name, notationKey = "" , color, handler) {
         this.#name = name;
+        this.#handler = handler;
         this.notationKey = notationKey;
         this.#color = color;
-        this.#board = board;
+        this.#board = handler.position;
         this.#hasMoved = false;
     }
     get name() {
         return this.#name;
+    }
+    get handler() {
+        return this.#handler;
     }
     get notationKey() {
         return this.#notationKey;
@@ -33,15 +41,27 @@ class Piece {
     set hasMoved(value) {
         this.#hasMoved = value;
     }
-    get canBeTaken() {
-        return this.#canBeTaken;
+    get isLegalMove() {
+        return this.#canBeTaken
     }
-    set canBeTaken(value) {
+    set isLegalMove(value) {
         if (typeof value !== "boolean") {
             throw new TypeError("canBeTaken must be a boolean");
         }
         if (this.#canBeTaken === value) return;
         this.#canBeTaken = value;
+    }
+    get canBeTaken() {
+        return this.#canBeTaken;
+    }
+    get isSelected() {
+        return this.#isSelected;
+    }
+    set isSelected(value) {
+        if (typeof value !== "boolean") {
+            throw new TypeError("isSelected must be a boolean");
+        }
+        this.#isSelected = value;
     }
     get position() {
         for (let i = 0; i < this.#board.length; i++) {
@@ -55,6 +75,10 @@ class Piece {
     }
     existsInBoard(square) {
         return square.x >= 0 && square.x < this.#board.length && square.y >= 0 && square.y < this.#board.length;
+    }
+    filterIllegalMoves(moves) {
+        const legalMoves = moves.filter(move => Board.isLegalMove(this.#handler, this, move));
+        return legalMoves
     }
 }
 

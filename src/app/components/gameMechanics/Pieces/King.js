@@ -7,10 +7,11 @@ class King extends Piece {
     }
     get moves() {
         const baseMoves = this.#baseMoves();
-        return baseMoves
+        const filteredMoves = this.filterIllegalMoves(baseMoves);
+        return filteredMoves
     }
     get pieceIcon() {
-        return <FaChessKing className ={this.color ? "white-piece" : "black-piece"} />;
+        return <FaChessKing className ={`${this.color ? "white-piece" : "black-piece"} ${this.isSelected ? "selected-piece" : ""} ${this.canBeTaken ? "takeable-piece" : ""}`}/>;
     }
     #baseMoves() {
         const moves = [];

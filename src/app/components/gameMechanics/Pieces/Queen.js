@@ -7,10 +7,11 @@ class Queen extends Piece {
     }
     get moves() {
         const baseMoves = [...this.#straightMoves(), ...this.#diagonalMoves()];
-        return baseMoves
+        const filteredMoves = this.filterIllegalMoves(baseMoves);
+        return filteredMoves
     }
     get pieceIcon() {
-        return <FaChessQueen className ={this.color ? "white-piece" : "black-piece"} />;
+        return <FaChessQueen className ={`${this.color ? "white-piece" : "black-piece"} ${this.isSelected ? "selected-piece" : ""} ${this.canBeTaken ? "takeable-piece" : ""}`}/>;
     }
     #diagonalMoves() {
         const moves = [];

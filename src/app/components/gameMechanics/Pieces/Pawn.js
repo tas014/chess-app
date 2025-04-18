@@ -12,10 +12,11 @@ class Pawn extends Piece {
         const baseMoves = this.#baseMoves();
         const enPassantMoves = this.#enPassant();
         moves = [...baseMoves, ...enPassantMoves];
+        moves = this.filterIllegalMoves(moves);
         return moves
     }
     get pieceIcon() {
-        return <FaChessPawn className ={this.color ? "white-piece" : "black-piece"} />;
+        return <FaChessPawn className ={`${this.color ? "white-piece" : "black-piece"} ${this.isSelected ? "selected-piece" : ""} ${this.canBeTaken ? "takeable-piece" : ""}`}/>;
     }
     #baseMoves() {
         const moves = [];
@@ -27,7 +28,7 @@ class Pawn extends Piece {
                 moves.push({x, y});
                 // Up 2
                 x = this.position.x - 2; y = this.position.y;
-                if (this.existsInBoard({x, y}) && this.board[x][y].color !== this.color) {
+                if (!this.hasMoved && this.board[x][y].color !== this.color && this.existsInBoard({x, y})) {
                     moves.push({x, y});
                 }
             }
