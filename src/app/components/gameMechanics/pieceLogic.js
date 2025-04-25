@@ -49,15 +49,16 @@ const generatePawnMoves = (piece, board, color, scan = false) => {
                         x: piece.x - 1,
                         y: piece.y
                     })
-                }
-            }
-            if (piece.x === 6) {
-                if (board[piece.x - 2][piece.y] === 0) {
-                    moves.push({
-                        x: piece.x - 2,
-                        y: piece.y,
-                        event: 'pawnJump'
-                    })
+                    // pawn jump
+                    if (piece.x === 6) {
+                        if (board[piece.x - 2][piece.y] === 0) {
+                            moves.push({
+                                x: piece.x - 2,
+                                y: piece.y,
+                                event: 'pawnJump'
+                            })
+                        }
+                    }
                 }
             }
             //Promotion logic
@@ -160,15 +161,16 @@ const generatePawnMoves = (piece, board, color, scan = false) => {
                         x: piece.x + 1,
                         y: piece.y
                     })
-                }
-            }
-            if (piece.x === 1) {
-                if (board[piece.x + 2][piece.y] === 0) {
-                    moves.push({
-                        x: piece.x + 2,
-                        y: piece.y,
-                        event: 'pawnJump'
-                    })
+                    // pawn jump
+                    if (piece.x === 1) {
+                        if (board[piece.x + 2][piece.y] === 0) {
+                            moves.push({
+                                x: piece.x + 2,
+                                y: piece.y,
+                                event: 'pawnJump'
+                            })
+                        }
+                    }
                 }
             }
             //Promotion logic

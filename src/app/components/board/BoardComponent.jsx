@@ -35,7 +35,6 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
         event: null
     })
     const matrixSize = Array.from(Array(8).keys());
-    //Transfer all the piece representation into a matrix that gets updated so the content updates with it automatically
 
     const generateSquareColor = (row, square) => {
         if ((row + square) % 2 === 0) {
@@ -257,15 +256,14 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
         return (
             matrixSize.map(row => {
                 return (
-                    <tr key={`Row${row}`} className={styles.boardRow}>
+                    <div key={`Row${row}`} className={styles.boardRow}>
                         {matrixSize.map(square => {
                             let squareColor = generateSquareColor(row, square);
                             return (
-                                //<td key={`Square${row+square}`} className={squareColor} id={`${row} ${square}`}>{setPieces(row, square)}</td>
                                 <BoardSquare key={`Square${row + square}`} onSquareClick={handleClick} styleData={squareColor} squareID={`${row} ${square}`} pos={{ x: row, y: square }} boardData={gameMatrix} />
                             )
                         })}
-                    </tr>)
+                    </div>)
 
             })
         )
@@ -274,7 +272,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
     return (
         <div>
             {!gameStillOn && isPromoting ?
-                <div className='promotion_container'>
+                <div className={styles['promotion-container']}>
                     <PromotionScreen 
                         handleSpecialMove={handleSpecialMove} 
                         matrix={gameMatrix}
@@ -282,11 +280,9 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
                     />
                 </div>
             : null}
-            <table>
-                <tbody>
-                    {generateBoard(matrixSize)}
-                </tbody>
-            </table>
+            <div className='chessboard-container'>
+                {generateBoard(matrixSize)}
+            </div>
         </div>
     )
 }

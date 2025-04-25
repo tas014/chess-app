@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import BoardComponent from './board/BoardComponent'
-import GameClock from './GameClock';
+import GameClock from './Clocks/GameClock';
 import Reset from './Reset';
 
 const Game = () => {
