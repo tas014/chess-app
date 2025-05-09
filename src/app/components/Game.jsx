@@ -1,66 +1,54 @@
 'use client'
 import { useEffect, useState } from 'react'
 import BoardComponent from './board/BoardComponent'
-import GameClock from './Clocks/GameClock';
-import Reset from './Reset';
+import GameClock from './PlayerMenu/PlayerMenu';
+import Reset from './UI/Reset';
+import SideMenu from './UI/SideMenu';
+import styles from './Game.module.css'
 
 const Game = () => {
-    const initialTime = 300;
     const [gameStillOn, setGameStillOn] = useState(true);
+    const [reset, setReset] = useState(false);
     const [turn, setTurn] = useState(true);
-    const [whiteTime, setWhiteTime] = useState(initialTime);
-    const [blackTime, setBlackTime] = useState(initialTime);
+    const [lastMove, setLastMove] = useState(null);
+    const [victoryCause, setVictoryCause] = useState(null);
     const [winner, setWinner] = useState(null);
 
-    useEffect(() => {
-        let intervalID;
-        const tickRate = 1000; // 1 second
-        if (gameStillOn) {
-            if (turn) {
-                intervalID = setInterval(()=> {
-                    setWhiteTime(prevTime => {
-                        const newTime = prevTime - 1;
-                        if (newTime <= 0 && !winner) {
-                            setWinner("Black");
-                            setGameStillOn(false);
-                        }
-                        return newTime
-                    });
-                }, tickRate)
-            } else {
-                intervalID = setInterval(()=> {
-                    setBlackTime(prevTime => {
-                        const newTime = prevTime - 1;
-                        if (newTime <= 0 && !winner) {
-                            setWinner("White");
-                            setGameStillOn(false);
-                        }
-                        return newTime
-                    });
-                }, tickRate)
-            }
-        }
-        return () => clearInterval(intervalID);
-    },[gameStillOn, turn])
+    const resetGame = () => {
+        setGameStillOn(true);
+        setTurn(true);
+        setWinner(null);
+        setReset(true);
+    }
 
     return (
-        <section>
-            <GameClock 
-                color={"black"}
-                time={blackTime}
-            />
-            <BoardComponent 
-                gameStillOn={gameStillOn} 
-                setGameStillOn={setGameStillOn}
+        <section className={styles["main-container"]}>
+            <div>
+                <BoardComponent 
+                    gameStillOn={gameStillOn} 
+                    setGameStillOn={setGameStillOn}
+                    turn={turn}
+                    setTurn={setTurn}
+                    reset={reset}
+                    triggerReset={setReset}
+                    setLastMove={setLastMove}
+                />
+                {winner && <h2>{winner} wins!</h2>}
+            </div>
+            {/* gameStillOn, turn, winner, move, prevMove, resetGame, pauseGame, setWinner, setGameStillOn, setReset */}
+            <SideMenu 
+                gameStillOn={gameStillOn}
+                setGameStillOn={setGameStillOn} 
                 turn={turn}
-                setTurn={setTurn}
+                winner={winner}
+                lastMove={lastMove}
+                movesList={[]}
+                reset={resetGame}
+                toggleGame={() => setGameStillOn(!gameStillOn)}
+                setWinner={setWinner}
+                victoryCause={victoryCause}
+                setVictoryCause={setVictoryCause}
             />
-            <GameClock 
-                color={"white"}
-                time={whiteTime}
-            />
-            <Reset gameStillOn={gameStillOn} setGameStillOn={setGameStillOn} />
-            {winner && <h2>{winner} wins!</h2>}
         </section>
     )
 }

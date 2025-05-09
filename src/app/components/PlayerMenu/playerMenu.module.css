@@ -1,0 +1,60 @@
+.clock {
+    padding: 2rem;
+    border-radius: 1rem;
+    margin: 1rem 0rem;
+    text-align: center;
+    font-size: 1.3em;
+    width: 100%;
+}
+
+.white-clock {
+    background-color: #c6e3d4;
+    color: #01160b;
+}
+.black-clock {
+    background-color: #01160b;
+    color: #c6e3d4;
+    order: 2
+}
+
+.player-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.resign, .draw {
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: 0.4s ease;
+}
+
+.resign:hover, .draw:hover {
+    background-color: #f0f0f0;
+    font-size: 1.3rem;
+    padding: 0.6rem 1.1rem;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.resign {
+    background-color: rgb(139, 35, 17);
+    color: white;
+    border-color: rgb(139, 35, 17);
+}
+
+.draw {
+    background-color: rgb(233, 233, 206);
+    color: black;
+    border-color: rgb(233, 233, 206);
+}
+
+.icon {
+    width: 2rem;
+    height: 2rem;
+}
