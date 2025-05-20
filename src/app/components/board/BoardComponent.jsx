@@ -318,7 +318,8 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
                     <PromotionScreen 
                         handleSpecialMove={handleSpecialMove} 
                         matrix={gameMatrix}
-                        eventMove={currentEvent}    
+                        eventMove={currentEvent}
+                        color={!turn}    
                     />
                 </div>
             : null}
