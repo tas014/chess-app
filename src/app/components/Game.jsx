@@ -5,12 +5,13 @@ import GameClock from './PlayerMenu/PlayerMenu';
 import Reset from './UI/Reset';
 import SideMenu from './UI/SideMenu';
 import styles from './Game.module.css'
+import { isCheck } from './gameMechanics/pieceLogic';
 
 const Game = () => {
     const [gameStillOn, setGameStillOn] = useState(true);
-    const [reset, setReset] = useState(false);
+    const [resetKey, setResetKey] = useState(0);
     const [turn, setTurn] = useState(true);
-    const [lastMove, setLastMove] = useState(null);
+    const [moveList, setMoveList] = useState([]);
     const [victoryCause, setVictoryCause] = useState(null);
     const [winner, setWinner] = useState(null);
 
@@ -18,7 +19,22 @@ const Game = () => {
         setGameStillOn(true);
         setTurn(true);
         setWinner(null);
-        setReset(true);
+        setResetKey(resetKey + 1);
+        setMoveList([]);
+        setVictoryCause(null);
+    }
+
+    const addMoveToList = (newMove) => {
+        const moveObject = {
+            moveData: {
+                from: newMove.from,
+                to: newMove.to,
+            },
+            isCheck: newMove.isCheck,
+            isCheckmate: newMove.isCheckmate,
+            id: moveList.length + 1,
+        }
+        setMoveList([...moveList, moveObject]);
     }
 
     return (
@@ -29,20 +45,19 @@ const Game = () => {
                     setGameStillOn={setGameStillOn}
                     turn={turn}
                     setTurn={setTurn}
-                    reset={reset}
-                    triggerReset={setReset}
-                    setLastMove={setLastMove}
+                    addMoveToList={addMoveToList}
+                    setWinner={setWinner}
+                    setVictoryCause={setVictoryCause}
+                    key={resetKey}
                 />
                 {winner && <h2>{winner} wins!</h2>}
             </div>
-            {/* gameStillOn, turn, winner, move, prevMove, resetGame, pauseGame, setWinner, setGameStillOn, setReset */}
             <SideMenu 
                 gameStillOn={gameStillOn}
                 setGameStillOn={setGameStillOn} 
                 turn={turn}
                 winner={winner}
-                lastMove={lastMove}
-                movesList={[]}
+                movesList={moveList}
                 reset={resetGame}
                 toggleGame={() => setGameStillOn(!gameStillOn)}
                 setWinner={setWinner}

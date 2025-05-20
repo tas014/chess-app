@@ -970,7 +970,6 @@ const isCheck = (color, board) => {
             isCheck = true;
         }
     }
-    console.log(isCheck, kingPos)
     return isCheck
 }
 

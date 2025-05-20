@@ -12,6 +12,7 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
     const [draw, setDraw] = useState(false);
     const [whiteDraw, setWhiteDraw] = useState(false);
     const [blackDraw, setBlackDraw] = useState(false);
+    const [resetKey, setResetKey] = useState(1);
 
     useEffect(() => {
         let intervalID;
@@ -46,10 +47,19 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
         return () => clearInterval(intervalID);
     },[gameStillOn, turn])
 
+    useEffect(() => {
+        if (whiteResign) {
+            handleResign(true);
+        }
+        if (blackResign) {
+            handleResign(false);
+        }
+    }, [whiteResign, blackResign])
+
     const handleResign = color => {
         const winnerColor = !color ? "Black" : "White";
         setGameStillOn(false);
-        setVictoryCause(`${color} has resigned`);
+        setVictoryCause(`${winnerColor} has resigned`);
     }
 
     const offerDraw = color => {
@@ -59,7 +69,7 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
                 if (blackDraw) {
                     setGameStillOn(false);
                     setDraw(true);
-                    setVictoryCause("The players have come to an agreement")
+                    setVictoryCause("Draw by agreement.")
                 }
             } else {
                 setWhiteDraw(false);
@@ -84,27 +94,32 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
         setDraw(false);
         setWhiteDraw(false);
         setBlackDraw(false);
-        resetGame();
+        setResetKey(resetKey + 1);
+        setWhiteResign(false);
+        setBlackResign(false);
+        setGameStillOn(true);
+        reset();
     }
 
     const notation = (moves, isCheck, isCheckmate) => {
+        // from and to = {value, row, col}
         const {from, to} = moves;
         let isPawn = false;
         const translateCoordToNotation = (row, col) => {
             const letters = "abcdefgh";
-            const numbers = "12345678";
-            return `${letters[row]}${numbers[col]}`;
+            const numbers = "87654321";
+            return `${letters[col]}${numbers[row]}`;
         }
-        const getPieceNotation = move => {
-            const {value, row, col} = move;
-            const absSquareContent = Math.abs(value);
-            switch (absSquareContent) {
+        const getPieceNotation = (move, queeningPiece = false) => {
+            const {val, x, y} = move;
+            const absSquareContent = Math.abs(val);
+            switch (queeningPiece ? Math.abs(queeningPiece) : absSquareContent) {
                 case 1:
                 case 7:
                 case 21:
                 case 27:
                     isPawn = true;
-                    return translateCoordToNotation(row, col);
+                    return translateCoordToNotation(x, y);
                 case 3:
                 case 23:
                     return "N";
@@ -130,10 +145,13 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
             }
         }
         const fromPiece = getPieceNotation(from);
-        if (to.event === "castlesShort") return `O-O${isCheck ? (isCheckmate ? "#" : "+") : ""}`;
-        if (to.event === "castlesLong") return `O-O-O${isCheck ? (isCheckmate ? "#" : "+") : ""}`;
-        if (to.event === "promotion") return `${fromPiece[0]}${getPieceNotation(to) ? `x${getPieceNotation(to)}` : ""}=${getPieceNotation(to)}${isCheck ? (isCheckmate ? "#" : "+") : ""}`;
-        return `${isPawn ? fromPiece[0] : fromPiece}${getPieceNotation(to) ? `x${getPieceNotation(to)}` : ""}${isCheck ? (isCheckmate ? "#" : "+") : ""}`;
+        const toPiece = getPieceNotation(to);
+        const landingSquare = translateCoordToNotation(to.x, to.y);
+        if (to.event === "castlesShort") return `O-O${isCheckmate ? "#" : ""}${isCheck && !isCheckmate ? "+" : ""}`;
+        if (to.event === "castlesLong") return `O-O-O${isCheckmate ? "#" : ""}${isCheck && !isCheckmate ? "+" : ""}`;
+        if (to.event === "promotion") return `${toPiece ? fromPiece[0]+"x"+landingSquare : landingSquare}=${getPieceNotation(to, to.queeningValue)}${isCheckmate ? "#" : ""}${isCheck && !isCheckmate ? "+" : ""}`;
+        if (to.event === "enPassant") return `${fromPiece[0]}x${translateCoordToNotation(from.x, to.y)}${isCheckmate ? "#" : ""}${isCheck && !isCheckmate ? "+" : ""}`;
+        return `${fromPiece[0]}${isPawn && !toPiece ? landingSquare[1] : (!toPiece ? landingSquare : "x"+landingSquare) }${isCheckmate ? "#" : ""}${isCheck && !isCheckmate ? "+" : ""}`;
     }
         
     
@@ -145,18 +163,21 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
                 resign={blackResign}
                 setResign={setBlackResign}
                 offerDraw={()=>offerDraw(false)}
+                key={resetKey}
             />
             {movesList.length > 0 && 
                 <ul>
-                    {movesList.map(move => <li key={move.id}>{notation(move.moveData, move.isCheck, move.isCheckmate)}</li>)}
+                    {movesList.map(({id, moveData, isCheck, isCheckmate}) => <li key={id}>{notation(moveData, isCheck, isCheckmate)}</li>)}
                 </ul>}
             <Reset toggleGame={toggleGame} reset={resetGame} gameStillOn={gameStillOn} winner={winner} victoryCause={victoryCause} offerDraw={draw} />
+            {victoryCause && <h2>{victoryCause}</h2>}
             <PlayerMenu 
                 color={"white"}
                 time={whiteTime}
                 resign={whiteResign}
                 setResign={setWhiteResign}
                 offerDraw={()=>offerDraw(true)}
+                key={-(resetKey)}
             />
         </div>
     )

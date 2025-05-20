@@ -18,6 +18,7 @@ const PlayerMenu = ({color, time, resign, setResign, offerDraw}) => {
         } else {
             clearTimeout(resignTimer);
             setResign(true);
+            setIsResigning(false);
         }
     }
 

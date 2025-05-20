@@ -48,10 +48,18 @@
     border-color: rgb(139, 35, 17);
 }
 
+.active-resign {
+    background-color: rgb(47, 27, 106);
+}
+
 .draw {
     background-color: rgb(233, 233, 206);
     color: black;
     border-color: rgb(233, 233, 206);
+}
+
+.active-draw {
+    background-color: rgb(96, 96, 75);
 }
 
 .icon {

@@ -2,10 +2,11 @@
 import styles from './board.module.css';
 import BoardSquare from './BoardSquare';
 import PromotionScreen from '../UI/PromotionScreen';
-import { generateLegalMoves, isGameOver } from '../gameMechanics/pieceLogic';
+import { isCheck, generateLegalMoves, isGameOver } from '../gameMechanics/pieceLogic';
 import { useState } from 'react';
 
-const defaultBoardPosition = [
+const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToList, setWinner, setVictoryCause}) => {
+    const defaultBoardPosition = [
     //Hardcoded Chessboard Structure, rooks are 5, bishops are 4, knights are 3, queens are 9, kings are 8 and pawns are 1
     [-6, -3, -4, -9, -8, -4, -3, -6],
     [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -16,10 +17,9 @@ const defaultBoardPosition = [
     [1, 1, 1, 1, 1, 1, 1, 1],
     [6, 3, 4, 9, 8, 4, 3, 6]
 ]
-
-const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [isPromoting, setIsPromoting] = useState(false);
+    let promotionFlag = false;
     const [boardEvent, setBoardEvent] = useState(null); /*
         [{  event: 'key',
             x: num,
@@ -43,12 +43,22 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
         return false;
     }
 
-    const generateSquareId = (row, square) => {
-        return `${String.fromCharCode((row * -1) + 72)}${square + 1}`
+    const addMoves = (oldSquare, newSquare, check, mate, newPiece = null) => {
+        const newMove = {
+            from: {...oldSquare},
+            to: {
+                ...newSquare,
+                queeningValue: newPiece,
+            },
+            isCheck: check,
+            isCheckmate: mate
+        }
+        if ((!promotionFlag && !newPiece) || newPiece) {
+            addMoveToList(newMove);
+        }
     }
 
     const handleClick = clickedSquare => {
-        //console.log(idToMatrixPos(clickedSquare.id));
         if (gameStillOn) {
             if (selectedPiece != null) {
                 Move(clickedSquare)
@@ -62,17 +72,31 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
         const currentSquare = idToMatrixPos(clickedSquare.id);
         const absSquareValue = Math.abs(gameMatrix[currentSquare.x][currentSquare.y]);
         if (absSquareValue >= 20) {
+            const { x, y } = idToMatrixPos(selectedPiece.id);
+            const prevSquareNotation = {
+                x, y, 
+                val: gameMatrix[x][y]
+            }
+            const currentSquareNotation = {
+                x: currentSquare.x,
+                y: currentSquare.y,
+                val: gameMatrix[currentSquare.x][currentSquare.y],
+                event: null
+            }
             if (boardEvent.length >= 1) {
                 const selectedEventMove = boardEvent.filter(e => e.x === currentSquare.x && e.y === currentSquare.y);
                 if (selectedEventMove.length !== 0) {
-                    updateGameMatrix(currentSquare, selectedEventMove[0].event)
+                    updateGameMatrix(currentSquare, selectedEventMove[0].event);
+                    currentSquareNotation.event = selectedEventMove[0].event;
                 } else {
                     updateGameMatrix(currentSquare);
                 }
             } else {
                 updateGameMatrix(currentSquare);
             }
-            setTurn(!turn)
+            const checkmateObj = isGameOver(!turn, gameMatrix);
+            addMoves(prevSquareNotation, currentSquareNotation, isCheck(!turn, gameMatrix), checkmateObj.isMate);
+            setTurn(!turn);
         } else {
             clearLegalMoves();
             setSelectedPiece(null)
@@ -80,14 +104,22 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
 
         const gameEnd = isGameOver(!turn, gameMatrix);
         if (gameEnd.isMate) {
-            if (!turn) {
+            if (turn) {
                 console.log("Checkmate! White is victorious!")
+                setWinner("White");
+                setVictoryCause("Checkmate")
             } else {
                 console.log("Checkmate! Black is victorious!")
+                setWinner("Black");
+                setVictoryCause("Checkmate")
             }
+            setGameStillOn(false);
         }
         if (gameEnd.isStalemate) {
             console.log("Stalemate! The game is a draw!")
+            setWinner(null);
+            setVictoryCause("Stalemate")
+            setGameStillOn(false);
         }
     }
 
@@ -119,9 +151,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
     const showLegalMoves = moves => {
         const newGameMatrix = [...gameMatrix];
         const newEventMoves = [];
-        //console.log(moves)
         moves.forEach(move => {
-            //console.log(move)
             if (checkForEvent(move)) {
                 newEventMoves.push(move)
             }
@@ -179,11 +209,23 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
 
     const handleSpecialMove = (matrix, eventMove, promotingPiece = false) => {
         const { currentSquare, previousSquare, event } = eventMove;
+        const prevSquareNotation = {
+            ...previousSquare,
+            val: matrix[previousSquare.x][previousSquare.y]
+        }
+        const currentSquareNotation = {
+            x: currentSquare.x,
+            y: currentSquare.y,
+            val: matrix[currentSquare.x][currentSquare.y],
+            event
+        }
 
         const updateBoard = (newPiece = false, enPassant = false) => {
             if (!newPiece) {
                 matrix[currentSquare.x][currentSquare.y] = matrix[previousSquare.x][previousSquare.y];
                 matrix[previousSquare.x][previousSquare.y] = 0;
+                const checkmateObj = isGameOver(!turn, matrix);
+                addMoves(prevSquareNotation, currentSquareNotation, isCheck(!turn, matrix), checkmateObj.isMate); 
             } else {
                 matrix[currentSquare.x][currentSquare.y] = newPiece;
                 matrix[previousSquare.x][previousSquare.y] = 0;
@@ -210,14 +252,15 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
                 break;
 
             case 'promotion':
-                //queeningPiece = matrix[previousSquare.x][previousSquare.y] > 0 ? 9 : -9;
                 setIsPromoting(!isPromoting);
+                promotionFlag = !promotionFlag;
                 setGameStillOn(!gameStillOn);
                 if (promotingPiece) {
-                    console.log(matrix[previousSquare.x][previousSquare.y]);
                     queeningPiece = matrix[previousSquare.x][previousSquare.y] > 0 ? promotingPiece : -(promotingPiece)
                     updateBoard(queeningPiece);
                     setSelectedPiece(null);
+                    const checkmateObj = isGameOver(turn, matrix);
+                    addMoves(prevSquareNotation, currentSquareNotation, isCheck(turn, matrix), checkmateObj.isMate, promotingPiece);
                 }
                 break;
 
@@ -238,7 +281,6 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn}) => {
             default:
                 break;
         }
-        //console.log(matrix, currentSquare, previousSquare, event);
     }
 
     const idToMatrixPos = id => {
