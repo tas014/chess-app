@@ -108,7 +108,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
     }
 
     const updatePiece = (from, to, event, promotedTo = null) => {
-        const newPieces = pieces.map(piece => ({...piece}));
+        const newPieces = pieces.map(piece => ({...piece})).filter(piece => !piece.wasTaken);
         const fromPieceIndex = newPieces.findIndex(piece => piece.gamePosition.x === from.x && piece.gamePosition.y === from.y);
         
         if (fromPieceIndex !== -1) {
