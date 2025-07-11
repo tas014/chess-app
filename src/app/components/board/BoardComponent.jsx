@@ -19,7 +19,6 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         [1, 1, 1, 1, 1, 1, 1, 1],
         [6, 3, 4, 9, 8, 4, 3, 6]
     ];
-    const transitionTime = 300; // Time in ms for the transition of the piece movement
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [isPromoting, setIsPromoting] = useState(false);
     let promotionFlag = false;
@@ -28,7 +27,6 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
             x: num,
             y:num
         }]
-        If clicked square matches an event stored in this variable from generated moves, we can now know and handle it
     */
     const [jumpedPawn, setJumpedPawn] = useState(null);
     const [gameMatrix, setGameMatrix] = useState(defaultBoardPosition);
@@ -109,58 +107,93 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         return false;
     }
 
-    const updatePiece = (from, to, event = false) => {
-        let initialFromPieceId = null; // To store the ID of the piece that moved
-
-        setPieces(prevPieces => { // First stage: Update the piece's position
-            const updatedPiecesStage1 = prevPieces.map(piece => {
-                if (piece.gamePosition.x === from.x && piece.gamePosition.y === from.y) {
-                    const newPiece = { ...piece };
-                    newPiece.gamePosition = { x: to.x, y: to.y };
-                    if (event) {
-                        newPiece.element = event.pieceElement;
-                        newPiece.id = `${to.x}_${to.y}_promoted_${playedTurns}`;
-                    }
-                    initialFromPieceId = newPiece.id; // Store the ID here
-                    return newPiece;
-                }
-                return piece;
-            });
-            return updatedPiecesStage1;
-        });
-
-        // Second stage: Handle the piece capture and update the state to match transition
-        setTimeout(() => {
-            setPieces(prevPieces => {
-                const movedPiece = prevPieces.find(p => p.id === initialFromPieceId);
-
-                let newPiecesStage2 = prevPieces; // Start with the current state
-
-                if (movedPiece) {
-                    // Find all pieces at the 'to' coordinate, including the one that just moved
-                    const piecesAtTarget = prevPieces.filter(piece =>
-                        piece.gamePosition.x === to.x &&
-                        piece.gamePosition.y === to.y &&
-                        !piece.wasTaken // Only consider pieces not already taken
-                    );
-
-                    if (piecesAtTarget.length > 1) {
-                        // Identify the piece that was captured (the one that is NOT the movedPiece)
-                        const takenPiece = piecesAtTarget.find(piece => piece.id !== movedPiece.id);
-
-                        if (takenPiece) {
-                            newPiecesStage2 = prevPieces.map(piece => {
-                                if (piece.id === takenPiece.id) {
-                                    return { ...piece, wasTaken: true };
-                                }
-                                return piece;
-                            });
+    const updatePiece = (from, to, event, promotedTo = null) => {
+        const newPieces = pieces.map(piece => ({...piece}));
+        const fromPieceIndex = newPieces.findIndex(piece => piece.gamePosition.x === from.x && piece.gamePosition.y === from.y);
+        
+        if (fromPieceIndex !== -1) {
+            // Move the piece to the new position
+            const fromPiece = newPieces[fromPieceIndex];
+            const newGamePosition = {
+                x: to.x,
+                y: to.y
+            }
+            fromPiece.gamePosition = newGamePosition;
+            // Handle Captures
+            const overlappingPieces = newPieces.filter(piece => piece.gamePosition.x === to.x && piece.gamePosition.y === to.y && !piece.wasTaken);
+            if (overlappingPieces.length > 1) {
+                const takenPiece = overlappingPieces.filter(piece => piece.id !== fromPiece.id)[0];
+                takenPiece.wasTaken = true;
+            }
+            // Handle events
+            if (event) {
+                switch (event) {
+                    case 'promotion':
+                        if (Math.abs(promotedTo)) {
+                            let newElement;
+                            switch (promotedTo) {
+                                case 3: 
+                                    newElement = FaChessKnight;
+                                    break;
+                                case 4:
+                                    newElement = FaChessBishop;
+                                    break;
+                                case 5:
+                                    newElement = FaChessRook;
+                                    break;
+                                case 9:
+                                    newElement = FaChessQueen;
+                                    break;
+                                default:
+                                    console.warn("Unexpected event during promotion visual trigger");
+                                    break;
+                            }
+                            fromPiece.element = newElement;
                         }
-                    }
+                        break;
+                    case 'enPassant':
+                        if (fromPiece.color) {
+                            const enPassantIndex = newPieces.findIndex(piece => piece.gamePosition.x === to.x + 1 && piece.gamePosition.y === to.y);
+                            if (enPassantIndex !== -1) {
+                                newPieces[enPassantIndex].wasTaken = true;
+                            } else console.warn("No piece found at the en passant position to remove.");
+                        } else {
+                            const enPassantIndex = newPieces.findIndex(piece => piece.gamePosition.x === to.x - 1 && piece.gamePosition.y === to.y);
+                            if (enPassantIndex !== -1) {
+                                newPieces[enPassantIndex].wasTaken = true;
+                            } else console.warn("No piece found at the en passant position to remove.");
+                        }
+                        break;
+                    case 'castlesShort':
+                        if (fromPiece.color) {
+                            const rookIndex = newPieces.findIndex(piece => piece.gamePosition.x === 7 && piece.gamePosition.y === 7);
+                            if (rookIndex !== -1) {
+                                newPieces[rookIndex].gamePosition = { x: 7, y: 5 };
+                            } else console.warn("No rook found at the specified position to update.");
+                        } else {
+                            const rookIndex = newPieces.findIndex(piece => piece.gamePosition.x === 0 && piece.gamePosition.y === 7);
+                            if (rookIndex !== -1) {
+                                newPieces[rookIndex].gamePosition = { x: 0, y: 5 };
+                            } else console.warn("No rook found at the specified position to update.");
+                        }
+                        break;
+                    case 'castlesLong':
+                        if (fromPiece.color) {
+                            const rookIndex = newPieces.findIndex(piece => piece.gamePosition.x === 7 && piece.gamePosition.y === 0);
+                            if (rookIndex !== -1) {
+                                newPieces[rookIndex].gamePosition = { x: 7, y: 3 };
+                            } else console.warn("No rook found at the specified position to update.");
+                        } else {
+                            const rookIndex = newPieces.findIndex(piece => piece.gamePosition.x === 0 && piece.gamePosition.y === 0);
+                            if (rookIndex !== -1) {
+                                newPieces[rookIndex].gamePosition = { x: 0, y: 3 };
+                            } else console.warn("No rook found at the specified position to update.");
+                        }
+                        break;
                 }
-                return newPiecesStage2;
-            });
-        }, transitionTime-100);
+            }
+            setPieces(newPieces);
+        } else console.warn("No piece found at the specified position to update.");
     }
 
     const addMoves = (oldSquare, newSquare, check, mate, newPiece = null) => {
@@ -325,7 +358,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         }
         setJumpedPawn(null);
         setGameMatrix(newGameMatrix);
-        updatePiece(previousSquare, currentSquare);
+        updatePiece(previousSquare, currentSquare, event);
     }
 
     const handleSpecialMove = (matrix, eventMove, promotingPiece = false) => {
@@ -379,7 +412,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
                 if (promotingPiece) {
                     queeningPiece = matrix[previousSquare.x][previousSquare.y] > 0 ? promotingPiece : -(promotingPiece)
                     updateBoard(queeningPiece);
-                    setSelectedPiece(null);
+                    updatePiece(previousSquare, currentSquare, 'promotion', queeningPiece)
                     const checkmateObj = isGameOver(turn, matrix);
                     addMoves(prevSquareNotation, currentSquareNotation, isCheck(turn, matrix), checkmateObj.isMate, promotingPiece);
                 }
