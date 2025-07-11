@@ -2,10 +2,9 @@
 import styles from './board.module.css';
 import { FaChessKnight, FaChessBishop, FaChessPawn, FaChessRook, FaChessKing, FaChessQueen } from "react-icons/fa6";
 
-const BoardSquare = ({ onSquareClick, squareID, styleData, pos, boardData }) => {
-  const squareColor = styleData ? styles.lightSquare : styles.darkSquare;
+const BoardSquare = ({ squareID, callback, squareColor, takeable, isLegalMove }) => {
 
-  const setContent = (row, square) => {
+  /* const setContent = (row, square) => {
     const squareContent = boardData[row][square];
     const absSquareContent = Math.abs(squareContent);
 
@@ -67,21 +66,14 @@ const BoardSquare = ({ onSquareClick, squareID, styleData, pos, boardData }) => 
       default:
         break;
     }
-  }
-
-  const takeablePiece = squareValue => {
-    if (squareValue > 20 && squareValue <= 30) {
-      return true
-    }
-    return false
-  }
+  } */
 
   return (
     <div 
-    className={`${squareColor} ${takeablePiece(Math.abs(boardData[pos.x][pos.y])) ? styles.takeable : styles.square}`} 
-    onClick={e => onSquareClick(e.currentTarget)} 
-    id={squareID}>
-      {setContent(pos.x, pos.y)}
+      className={`${squareColor} ${takeable ? styles.takeable : styles.square}`} 
+      onClick={e => callback(e.currentTarget)} 
+      id={squareID}>
+        {isLegalMove ? <div className={styles.legalMove} /> : null}
     </div>
   )
 }

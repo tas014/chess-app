@@ -1,22 +1,25 @@
 'use client'
 import styles from './board.module.css';
+import { FaChessKnight, FaChessBishop, FaChessPawn, FaChessRook, FaChessKing, FaChessQueen } from "react-icons/fa6";
 import BoardSquare from './BoardSquare';
+import Piece from './Piece';
 import PromotionScreen from '../UI/promotion/PromotionScreen';
 import { isCheck, generateLegalMoves, isGameOver } from '../gameMechanics/pieceLogic';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToList, setWinner, setVictoryCause}) => {
     const defaultBoardPosition = [
-    //Hardcoded Chessboard Structure, rooks are 5, bishops are 4, knights are 3, queens are 9, kings are 8 and pawns are 1
-    [-6, -3, -4, -9, -8, -4, -3, -6],
-    [-1, -1, -1, -1, -1, -1, -1, -1],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [6, 3, 4, 9, 8, 4, 3, 6]
-]
+        //Hardcoded Chessboard Structure, rooks are 5, bishops are 4, knights are 3, queens are 9, kings are 8 and pawns are 1
+        [-6, -3, -4, -9, -8, -4, -3, -6],
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [6, 3, 4, 9, 8, 4, 3, 6]
+    ];
+    const transitionTime = 300; // Time in ms for the transition of the piece movement
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [isPromoting, setIsPromoting] = useState(false);
     let promotionFlag = false;
@@ -28,21 +31,136 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         If clicked square matches an event stored in this variable from generated moves, we can now know and handle it
     */
     const [jumpedPawn, setJumpedPawn] = useState(null);
-    const [gameMatrix, setGameMatrix] = useState(defaultBoardPosition)
+    const [gameMatrix, setGameMatrix] = useState(defaultBoardPosition);
+    const [boardSize, setBoardSize] = useState(560); // Default board size to its smallest size
     const [currentEvent, setCurrentEvent] = useState({
         currentSquare: null,
         previousSquare: null,
         event: null
     })
-    const matrixSize = Array.from(Array(8).keys());
-    const [movedPiece, setMovedPiece] = useState(null);
-    const [takenPiece, setTakenPiece] = useState(null);
+    const [playedTurns, setPlayedTurns] = useState(0);
+    const boardRef = useRef(null);
+    
+    const initiatePieces = () => {
+        const pieceArray = [];
+        defaultBoardPosition.forEach((row, indX) => {
+            row.forEach((piece, indY)=>{
+                let pieceElement = null;
+                switch (Math.abs(piece)) {
+                    case 1:
+                        pieceElement = FaChessPawn;
+                        break;
+                    case 3:
+                        pieceElement = FaChessKnight;
+                        break;
+                    case 4:
+                        pieceElement = FaChessBishop;
+                        break;
+                    case 6:
+                        pieceElement = FaChessRook;
+                        break;
+                    case 8:
+                        pieceElement = FaChessKing;
+                        break;
+                    case 9:
+                        pieceElement = FaChessQueen;
+                        break;
+                    default:
+                        return;
+                }
+                const color = piece > 0;
+                const pieceGamePosition = {
+                    x: indX,
+                    y: indY,
+                }
+                const pieceID = `${indX}_${indY}`;
+                pieceArray.push({
+                    id: pieceID,
+                    element: pieceElement,
+                    color,
+                    gamePosition: pieceGamePosition,
+                    wasTaken: false
+                })
+            })
+        })
+        return pieceArray;
+    }
+    const [pieces, setPieces] = useState(initiatePieces());
+    
+    useEffect(()=>{
+        const boardElement = boardRef.current;
+        if (!boardElement) return;
+        const boardObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const { width } = entry.contentRect;
+                if (width > 0) {
+                    setBoardSize(width);
+                }
+            }
+        })
+        boardObserver.observe(boardElement);
+        return () => {boardObserver.disconnect()}
+    },[setBoardSize]);
 
     const generateSquareColor = (row, square) => {
         if ((row + square) % 2 === 0) {
             return true
         }
         return false;
+    }
+
+    const updatePiece = (from, to, event = false) => {
+        let initialFromPieceId = null; // To store the ID of the piece that moved
+
+        setPieces(prevPieces => { // First stage: Update the piece's position
+            const updatedPiecesStage1 = prevPieces.map(piece => {
+                if (piece.gamePosition.x === from.x && piece.gamePosition.y === from.y) {
+                    const newPiece = { ...piece };
+                    newPiece.gamePosition = { x: to.x, y: to.y };
+                    if (event) {
+                        newPiece.element = event.pieceElement;
+                        newPiece.id = `${to.x}_${to.y}_promoted_${playedTurns}`;
+                    }
+                    initialFromPieceId = newPiece.id; // Store the ID here
+                    return newPiece;
+                }
+                return piece;
+            });
+            return updatedPiecesStage1;
+        });
+
+        // Second stage: Handle the piece capture and update the state to match transition
+        setTimeout(() => {
+            setPieces(prevPieces => {
+                const movedPiece = prevPieces.find(p => p.id === initialFromPieceId);
+
+                let newPiecesStage2 = prevPieces; // Start with the current state
+
+                if (movedPiece) {
+                    // Find all pieces at the 'to' coordinate, including the one that just moved
+                    const piecesAtTarget = prevPieces.filter(piece =>
+                        piece.gamePosition.x === to.x &&
+                        piece.gamePosition.y === to.y &&
+                        !piece.wasTaken // Only consider pieces not already taken
+                    );
+
+                    if (piecesAtTarget.length > 1) {
+                        // Identify the piece that was captured (the one that is NOT the movedPiece)
+                        const takenPiece = piecesAtTarget.find(piece => piece.id !== movedPiece.id);
+
+                        if (takenPiece) {
+                            newPiecesStage2 = prevPieces.map(piece => {
+                                if (piece.id === takenPiece.id) {
+                                    return { ...piece, wasTaken: true };
+                                }
+                                return piece;
+                            });
+                        }
+                    }
+                }
+                return newPiecesStage2;
+            });
+        }, transitionTime-100);
     }
 
     const addMoves = (oldSquare, newSquare, check, mate, newPiece = null) => {
@@ -63,10 +181,10 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
     const handleClick = clickedSquare => {
         if (gameStillOn) {
             if (selectedPiece != null) {
-                Move(clickedSquare)
-            } else {
-                getMoves(clickedSquare);
+                Move(clickedSquare);
+                return;
             }
+            getMoves(clickedSquare);
         }
     }
 
@@ -88,13 +206,13 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
             if (boardEvent.length >= 1) {
                 const selectedEventMove = boardEvent.filter(e => e.x === currentSquare.x && e.y === currentSquare.y);
                 if (selectedEventMove.length !== 0) {
-                    updateGameMatrix(currentSquare, selectedEventMove[0].event);
+                    updateGame(currentSquare, selectedEventMove[0].event);
                     currentSquareNotation.event = selectedEventMove[0].event;
                 } else {
-                    updateGameMatrix(currentSquare);
+                    updateGame(currentSquare);
                 }
             } else {
-                updateGameMatrix(currentSquare);
+                updateGame(currentSquare);
             }
             const checkmateObj = isGameOver(!turn, gameMatrix);
             addMoves(prevSquareNotation, currentSquareNotation, isCheck(!turn, gameMatrix), checkmateObj.isMate);
@@ -171,7 +289,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         return 'event' in move
     }
 
-    const updateGameMatrix = (currentSquare, event = false) => {
+    const updateGame = (currentSquare, event = false) => {
         let newGameMatrix = [...gameMatrix];
         const previousSquare = idToMatrixPos(selectedPiece.id);
 
@@ -207,6 +325,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         }
         setJumpedPawn(null);
         setGameMatrix(newGameMatrix);
+        updatePiece(previousSquare, currentSquare);
     }
 
     const handleSpecialMove = (matrix, eventMove, promotingPiece = false) => {
@@ -292,32 +411,47 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         }
     }
 
-    const generateBoard = (matrixSize) => {
-        return (
-            matrixSize.map(row => {
+    const matrixMap = () => {
+        return gameMatrix.map((row, indX) => {
+            return gameMatrix.map((col, indY) => {
+                const squareContent = gameMatrix[indX][indY];
+                const squareID = `${indX}_${indY}`;
+                const squareColor = generateSquareColor(indX, indY) ? styles.lightSquare : styles.darkSquare;
+                const isLegalMove = (squareContent === 20 || squareContent === 70);
+                const takeable = Math.abs(squareContent) > 20 && Math.abs(squareContent) < 70;
+                
                 return (
-                    <div key={`Row${row}`} className={styles.boardRow}>
-                        {matrixSize.map(square => {
-                            let squareColor = generateSquareColor(row, square);
-                            return (
-                                <BoardSquare 
-                                    key={`Square${row + square}`} 
-                                    onSquareClick={handleClick} 
-                                    styleData={squareColor} 
-                                    squareID={`${row} ${square}`} 
-                                    pos={{ x: row, y: square }} 
-                                    boardData={gameMatrix} 
-                                />
-                            )
-                        })}
-                    </div>)
-
+                    <BoardSquare 
+                        key={squareID} 
+                        squareID={squareID} 
+                        callback={handleClick} 
+                        squareColor={squareColor} 
+                        takeable={takeable} 
+                        isLegalMove={isLegalMove}
+                    />
+                )
             })
-        )
+        })
+    }
+
+    const piecesMap = () => {
+        return pieces.map(piece => {
+            const { id, element, color, gamePosition, wasTaken } = piece;
+            return (
+                <Piece 
+                    key={id} 
+                    Content={element} 
+                    color={color} 
+                    position={gamePosition} 
+                    wasTaken={wasTaken} 
+                    boardSize={boardSize}
+                />
+            )
+        })
     }
 
     return (
-        <div>
+        <div className={styles.gameContainer}>
             {!gameStillOn && isPromoting ?
                 <div className={styles['promotion-container']}>
                     <PromotionScreen 
@@ -328,8 +462,9 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
                     />
                 </div>
             : null}
-            <div className='chessboard-container' id='board'>
-                {generateBoard(matrixSize)}
+            <div className={styles.chessboardContainer} id='board' ref={boardRef}>
+                {matrixMap()}
+                {piecesMap()}
             </div>
         </div>
     )
