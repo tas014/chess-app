@@ -85,6 +85,10 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  font-size: 62.5%;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(

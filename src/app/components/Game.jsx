@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import BoardComponent from './board/BoardComponent'
 import GameClock from './PlayerMenu/PlayerMenu';
 import Reset from './UI/Reset';
-import SideMenu from './UI/SideMenu';
+import SideMenu from './UI/sideMenu/SideMenu';
 import styles from './Game.module.css'
 import { isCheck } from './gameMechanics/pieceLogic';
 

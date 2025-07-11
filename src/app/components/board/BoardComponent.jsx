@@ -1,7 +1,7 @@
 'use client'
 import styles from './board.module.css';
 import BoardSquare from './BoardSquare';
-import PromotionScreen from '../UI/PromotionScreen';
+import PromotionScreen from '../UI/promotion/PromotionScreen';
 import { isCheck, generateLegalMoves, isGameOver } from '../gameMechanics/pieceLogic';
 import { useState } from 'react';
 
@@ -35,6 +35,8 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         event: null
     })
     const matrixSize = Array.from(Array(8).keys());
+    const [movedPiece, setMovedPiece] = useState(null);
+    const [takenPiece, setTakenPiece] = useState(null);
 
     const generateSquareColor = (row, square) => {
         if ((row + square) % 2 === 0) {
@@ -141,7 +143,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
     const getMoves = clickedSquare => {
         const matrixCoords = idToMatrixPos(clickedSquare.id);
         const color = gameMatrix[matrixCoords.x][matrixCoords.y] > 0;
-        if (squareIsNotEmpty(matrixCoords) && color === turn) {
+        if (gameMatrix[matrixCoords.x][matrixCoords.y] !== 0 && color === turn) {
             setSelectedPiece(clickedSquare);
             const moves = generateLegalMoves(matrixCoords, gameMatrix);
             showLegalMoves(moves);
@@ -290,10 +292,6 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
         }
     }
 
-    const squareIsNotEmpty = coords => {
-        return gameMatrix[coords.x][coords.y] !== 0
-    }
-
     const generateBoard = (matrixSize) => {
         return (
             matrixSize.map(row => {
@@ -302,7 +300,14 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
                         {matrixSize.map(square => {
                             let squareColor = generateSquareColor(row, square);
                             return (
-                                <BoardSquare key={`Square${row + square}`} onSquareClick={handleClick} styleData={squareColor} squareID={`${row} ${square}`} pos={{ x: row, y: square }} boardData={gameMatrix} />
+                                <BoardSquare 
+                                    key={`Square${row + square}`} 
+                                    onSquareClick={handleClick} 
+                                    styleData={squareColor} 
+                                    squareID={`${row} ${square}`} 
+                                    pos={{ x: row, y: square }} 
+                                    boardData={gameMatrix} 
+                                />
                             )
                         })}
                     </div>)
@@ -323,7 +328,7 @@ const BoardComponent = ({gameStillOn, setGameStillOn, turn, setTurn, addMoveToLi
                     />
                 </div>
             : null}
-            <div className='chessboard-container'>
+            <div className='chessboard-container' id='board'>
                 {generateBoard(matrixSize)}
             </div>
         </div>

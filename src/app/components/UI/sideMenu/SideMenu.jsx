@@ -1,7 +1,8 @@
 'use client'
-import PlayerMenu from "../PlayerMenu/PlayerMenu"
-import Reset from "./Reset";
+import PlayerMenu from "../../PlayerMenu/PlayerMenu"
+import Reset from "../Reset";
 import { useState, useEffect } from "react";
+import styles from "./sideMenu.module.css";
 
 const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, toggleGame, setWinner, victoryCause, setVictoryCause}) => {
     const initialTime = 300; // 5 minutes in seconds
@@ -166,7 +167,7 @@ const SideMenu = ({gameStillOn, setGameStillOn ,turn, winner, movesList, reset, 
                 key={resetKey}
             />
             {movesList.length > 0 && 
-                <ul>
+                <ul className={styles["notation-container"]}>
                     {movesList.map(({id, moveData, isCheck, isCheckmate}) => <li key={id}>{notation(moveData, isCheck, isCheckmate)}</li>)}
                 </ul>}
             <Reset toggleGame={toggleGame} reset={resetGame} gameStillOn={gameStillOn} winner={winner} victoryCause={victoryCause} offerDraw={draw} />

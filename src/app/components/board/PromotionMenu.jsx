@@ -1,5 +1,4 @@
 import { FaChessKnight, FaChessBishop, FaChessRook, FaChessQueen } from "react-icons/fa6";
-import styles from './PromotionMenu.module.css';
 
 const PromotionMenu = ({ color }) => {
     return (
