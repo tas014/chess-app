@@ -1,6 +1,17 @@
 .main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    --board-size: 80rem;
+    display: grid;
+    grid-template-columns: 30rem auto 30rem;
+    grid-template-rows: 1fr auto 1fr;
+    grid-template-areas: 
+        "black-menu board notation"
+        ". board ."
+        "settings board white-menu"
+        ;
     gap: 0em 3em;
+}
+
+.board-container {
+    grid-area: board;
+    position: relative;
 }

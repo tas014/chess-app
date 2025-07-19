@@ -1,0 +1,359 @@
+/* General styles */
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.player-UI-container,
+.player-menu-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Desktop layout */
+.white-player-UI-container {
+  grid-area: white-menu;
+}
+
+.black-player-UI-container {
+  grid-area: black-menu;
+}
+
+.settings-container {
+  grid-area: settings;
+}
+
+.player-UI-container:last-of-type {
+  align-self: flex-end;
+}
+
+/* Player actions menu */
+
+.player-menu-interactables-container {
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+}
+
+.player-menu-container {
+  gap: 1rem;
+}
+
+.player-actions-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 1rem;
+}
+
+.player-actions-container button {
+  padding: 1.5rem 0px;
+  font-size: 2em;
+  border-radius: 0.6em;
+  border: none;
+}
+
+.player-clock {
+  display: grid;
+  place-content: center;
+  padding: 2rem 0px;
+  border-radius: 0.6rem;
+  font-size: 3em;
+  width: 100%;
+}
+
+.white-clock {
+  background-color: var(--light-square);
+  color: var(--dark-square);
+}
+
+.black-clock {
+  background-color: var(--dark-square);
+  color: var(--light-square);
+}
+
+.is-forfeiting {
+  background-color: #e55568;
+  color: white;
+}
+
+.is-offering-draw {
+  background-color: var(--main-color);
+  color: white;
+}
+
+.player-menu-drawing-message {
+  display: grid;
+  place-content: center;
+  font-size: 1.3em;
+}
+
+/* Player profile */
+
+.player-profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-profile-container svg {
+  font-size: 8em;
+  padding: 1rem;
+  border: solid 2px var(--main-color);
+  border-radius: 50%;
+  box-shadow: 0px 0px 20px var(--pink-shadow);
+}
+
+.player-profile-container input {
+  margin: 1rem;
+  padding: 1rem 0px;
+  text-align: center;
+  border-radius: 0.6rem;
+}
+
+.player-menu-drawing-message {
+  padding: 1rem 0rem;
+}
+
+/* Taken Pieces */
+
+.taken-piece-list {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1rem;
+  list-style: none;
+}
+
+.taken-piece-item {
+  border-radius: 1rem;
+  padding: 5px;
+  box-shadow: 5px 0px 5px #202020;
+}
+
+.taken-piece-item > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taken-piece-item span {
+  padding: 1rem;
+  font-size: 1.2em;
+}
+
+.taken-piece-item svg {
+  font-size: 2em;
+}
+
+.taken-piece-title {
+  font-size: 2em;
+  align-self: flex-start;
+}
+
+/* Notation */
+
+.moves-list-container {
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 20px var(--pink-shadow);
+  height: fit-content;
+  background-color: var(--pink-shadow);
+}
+
+.moves-list-container h3 {
+  font-size: 1.8em;
+}
+
+.moves-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  min-height: 5vh;
+  max-height: 25vh;
+  overflow-y: scroll;
+  scrollbar-color: var(--main-color);
+  padding: 1rem;
+  border: 2px solid var(--light-square);
+  border-radius: 1rem;
+  font-size: 1.3em;
+  font-weight: bold;
+  list-style-type: none;
+}
+
+.moves-list::-webkit-scrollbar-thumb {
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.moves-list li {
+  text-align: center;
+  padding: 1rem 0px;
+  background-color: var(--main-color);
+  height: fit-content;
+}
+
+.moves-list li:nth-child(even) {
+  background-color: var(--dark-square);
+}
+
+/* Settings */
+
+.settings-container {
+  --title-size: 1.5em;
+  font-size: 1.2em;
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: var(--pink-shadow);
+  box-shadow: 0px 0px 20px var(--pink-shadow);
+  align-self: flex-end;
+}
+
+.settings-container form {
+  display: grid;
+  grid-template-rows: 1fr 2fr 1fr;
+  gap: 1rem;
+}
+
+.animation-toggle-container,
+.checkbox-wrapper-5 {
+  display: flex;
+  align-items: center;
+}
+
+.settings-container h3 {
+  font-size: 2.5em;
+}
+
+.settings-container h5 {
+  font-size: var(--title-size);
+}
+
+.time-format-container h5 {
+  margin-bottom: 1rem;
+}
+
+.checkbox-wrapper-5,
+.time-format-container input {
+  margin-left: 1rem;
+}
+
+.time-format-container > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time-format-container label {
+  font-size: 1.2em;
+}
+
+.time-format-container input {
+  padding: 0.2rem;
+  text-align: center;
+  width: 30%;
+}
+
+/* Animations Checkbox styles (credit to David Darnes) */
+.checkbox-wrapper-5 .check {
+  --size: 2.5rem;
+  position: relative;
+  background: linear-gradient(90deg, #f19af3, #f099b5);
+  line-height: 0;
+  perspective: 400px;
+  font-size: var(--size);
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"],
+.checkbox-wrapper-5 .check label,
+.checkbox-wrapper-5 .check label::before,
+.checkbox-wrapper-5 .check label::after,
+.checkbox-wrapper-5 .check {
+  appearance: none;
+  display: inline-block;
+  border-radius: var(--size);
+  border: 0;
+  transition: 0.35s ease-in-out;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.checkbox-wrapper-5 .check label {
+  width: calc(2.2 * var(--size));
+  height: var(--size);
+  background: #d7d7d7;
+  overflow: hidden;
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"] {
+  position: absolute;
+  z-index: 1;
+  width: calc(0.8 * var(--size));
+  height: calc(0.8 * var(--size));
+  top: calc(0.1 * var(--size));
+  left: calc(0.1 * var(--size));
+  background: linear-gradient(45deg, #dedede, #ffffff);
+  box-shadow: 0 6px 7px rgba(0, 0, 0, 0.3);
+  outline: none;
+  margin: 0;
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked {
+  left: calc(1.3 * var(--size));
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + label {
+  background: transparent;
+}
+
+.checkbox-wrapper-5 .check label::before,
+.checkbox-wrapper-5 .check label::after {
+  content: "· ·";
+  position: absolute;
+  overflow: hidden;
+  left: calc(0.15 * var(--size));
+  top: calc(0.5 * var(--size));
+  height: var(--size);
+  letter-spacing: calc(-0.04 * var(--size));
+  color: #9b9b9b;
+  font-family: "Times New Roman", serif;
+  z-index: 2;
+  font-size: calc(0.6 * var(--size));
+  border-radius: 0;
+  transform-origin: 0 0 calc(-0.5 * var(--size));
+  backface-visibility: hidden;
+}
+
+.checkbox-wrapper-5 .check label::after {
+  content: "●";
+  top: calc(0.65 * var(--size));
+  left: calc(0.2 * var(--size));
+  height: calc(0.1 * var(--size));
+  width: calc(0.35 * var(--size));
+  font-size: calc(0.2 * var(--size));
+  transform-origin: 0 0 calc(-0.4 * var(--size));
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + label::before,
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + label::after {
+  left: calc(1.55 * var(--size));
+  top: calc(0.4 * var(--size));
+  line-height: calc(0.1 * var(--size));
+  transform: rotateY(360deg);
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + label::after {
+  height: calc(0.16 * var(--size));
+  top: calc(0.55 * var(--size));
+  left: calc(1.6 * var(--size));
+  font-size: calc(0.6 * var(--size));
+  line-height: 0;
+}
+
+.animation-toggle-container label {
+  color: transparent;
+}

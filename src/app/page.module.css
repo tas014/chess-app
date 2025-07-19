@@ -1,5 +1,6 @@
 .mainContainer {
   display: flex;
+  overflow: hidden;
   justify-content: center;
   align-items: center;
   flex-direction: column;

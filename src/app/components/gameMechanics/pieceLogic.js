@@ -757,10 +757,11 @@ const generateKingMoves = (piece, board, color, scan) => {
     const moves = verticalMoves.concat(diagonalMoves);
 
     if (!scan) {
+        const oppControl = getControlledSquares(board, color)
         //Short Castles logic
-        if (Math.abs(board[piece.x][piece.y]) === 8 && Math.abs(board[piece.x][piece.y + 3]) === 6) {
+        if (Math.abs(board[piece.x][piece.y]) === 8 && Math.abs(board[piece.x][piece.y + 3]) === 6 && !isCheck(color, board)) {
             for (let i = 1; i < 3; i++) {
-                if (board[piece.x][piece.y + i] !== 0) {
+                if (board[piece.x][piece.y + i] !== 0 || oppControl.find(controlledSquare => piece.x === controlledSquare.x && piece.y + i === controlledSquare.y)) {
                     break
                 }
                 if (i >= 2) {
@@ -773,9 +774,9 @@ const generateKingMoves = (piece, board, color, scan) => {
             }
         }
         //Long Castles logic
-        if (Math.abs(board[piece.x][piece.y]) === 8 && Math.abs(board[piece.x][piece.y - 4]) === 6) {
+        if (Math.abs(board[piece.x][piece.y]) === 8 && Math.abs(board[piece.x][piece.y - 4]) === 6 && !isCheck(color, board)) {
             for (let i = 1; i <= 3; i++) {
-                if (board[piece.x][piece.y - i] !== 0) {
+                if (board[piece.x][piece.y - i] !== 0 || oppControl.find(controlledSquare => piece.x === controlledSquare.x && piece.y + i === controlledSquare.y)) {
                     break
                 }
                 if (i >= 3) {

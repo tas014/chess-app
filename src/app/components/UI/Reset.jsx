@@ -1,4 +1,8 @@
-const Reset = ({toggleGame, reset, gameStillOn, winner, victoryCause, draw}) => {
+import { useContext } from "react"
+import { UIContext } from "../../context/context"
+
+const Reset = ({draw}) => {
+  const { gameStillOn, winner, victoryCause, resetGame: reset, toggleGame} = useContext(UIContext)
   return (
     <>
       <button 
