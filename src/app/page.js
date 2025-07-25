@@ -1,7 +1,7 @@
 "use client";
 import styles from "./page.module.css";
 import Header from "./components/header/Header";
-import Game from "./components/game";
+import Game from "./components/Game";
 import { useState } from "react";
 
 export default function Home() {
