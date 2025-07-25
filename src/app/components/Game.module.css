@@ -1,17 +1,55 @@
 .main-container {
-    --board-size: 80rem;
-    display: grid;
-    grid-template-columns: 30rem auto 30rem;
-    grid-template-rows: 1fr auto 1fr;
-    grid-template-areas: 
-        "black-menu board notation"
-        ". board ."
-        "settings board white-menu"
-        ;
-    gap: 0em 3em;
+  --board-size: 80rem;
+  display: grid;
+  grid-template-columns: 30rem auto 30rem;
+  grid-template-rows: 1fr auto 1fr;
+  grid-template-areas:
+    "black-menu board notation"
+    ". board ."
+    "settings board white-menu";
+  gap: 0em 3em;
 }
 
 .board-container {
-    grid-area: board;
-    position: relative;
+  grid-area: board;
+  position: relative;
+  display: grid;
+  place-content: center;
+}
+
+@media (max-width: 1650px) {
+  .main-container {
+    --board-size: 70rem;
+    grid-template-columns: 25rem auto 25rem;
+  }
+}
+
+@media (max-width: 1400px) {
+  .main-container {
+    --board-size: 60rem;
+  }
+}
+
+@media (max-width: 1250px) {
+  .main-container {
+    --board-size: 45rem;
+    grid-template-columns: 20rem auto 20rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-container {
+    --board-size: 65vw;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "black-menu"
+      "board"
+      "white-menu";
+  }
+}
+
+@media (max-width: 800px) {
+  .main-container {
+    --board-size: 95vw;
+  }
 }

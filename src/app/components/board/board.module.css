@@ -1,170 +1,192 @@
 .gameContainer {
-    --piece-size: calc(var(--board-size) / 8 * 0.7);
-    --main-color: #b984ce;
-    --takeablePiece: #e55568;
-    position: relative;
-    display: grid;
-    grid-template-areas: 
-        "coord-nums board"
-        ". coord-letters";
-    width: fit-content;
-    gap: 1rem;
+  --piece-size: calc(var(--board-size) / 8 * 0.7);
+  --square-size: calc(var(--board-size) / 8);
+  --main-color: #b984ce;
+  --takeablePiece: #e55568;
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    "coord-nums board"
+    ". coord-letters";
+  width: fit-content;
+  gap: 1rem;
 }
 
 .boardRow,
 .darkSquare,
 .lightSquare {
-    display: flex;
+  display: flex;
 }
 
 .darkSquare,
 .lightSquare {
-    height: 10rem;
-    width: 10rem;
-    display: grid;
-    place-items: center;
-    border-radius: 1.5rem;
+  height: var(--square-size);
+  width: var(--square-size);
+  display: grid;
+  place-items: center;
+  border-radius: 1.5rem;
 }
 
-.board-coordinate-letters, .board-coordinate-numbers {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    place-content: center;
+.board-coordinate-letters,
+.board-coordinate-numbers {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  place-content: center;
 }
 
 .board-coordinate-numbers {
-    grid-area: coord-nums;
-    grid-template-rows: repeat(8, 1fr);
-    height: var(--board-size); 
-    width: fit-content;
-    justify-self: end;
+  grid-area: coord-nums;
+  grid-template-rows: repeat(8, 1fr);
+  height: var(--board-size);
+  width: fit-content;
+  justify-self: end;
 }
 
-.board-coordinate-letters {   
-    grid-area: coord-letters;
-    grid-template-columns: repeat(8, 1fr);
-    width: var(--board-size);
-    height: fit-content;
+.board-coordinate-letters {
+  grid-area: coord-letters;
+  grid-template-columns: repeat(8, 1fr);
+  width: var(--board-size);
+  height: fit-content;
 }
 
-.board-coordinate-letters span, .board-coordinate-numbers span {
-    display: grid;
-    place-content: center;
-    padding: 1rem;
-    font-size: 1.7em;
-    font-weight: bold;
-    color: var(--main-color);
+.board-coordinate-letters span,
+.board-coordinate-numbers span {
+  display: grid;
+  place-content: center;
+  padding: 1rem;
+  font-size: var(--base-text-size);
+  font-weight: bold;
+  color: var(--main-color);
 }
 
 .darkSquare {
-    background-color: var(--dark-square);
-    color: #b7faf2
+  background-color: var(--dark-square);
+  color: #b7faf2;
 }
 
 .lightSquare {
-    background-color: var(--light-square);
-    color: #442274
+  background-color: var(--light-square);
+  color: #442274;
 }
 
 .takeable {
-    background-color: var(--takeablePiece);
+  background-color: var(--takeablePiece);
 }
 
 .square,
 .takeable {
-    margin: auto;
+  margin: auto;
 }
 
 .pieceIcon {
-    position: absolute;
-    display: inline-block;
-    pointer-events: none;
+  position: absolute;
+  display: inline-block;
+  pointer-events: none;
 }
 
 .transition {
-    transition: top 0.3s ease-in-out, left 0.3s ease-in-out, opacity 0.1s linear;
+  transition: top 0.3s ease-in-out, left 0.3s ease-in-out, opacity 0.1s linear;
 }
 
 .hidePiece {
-    display: none;
+  display: none;
 }
 
 .capturedPiece {
-    --taken-piece-position-top: 0;
-    --taken-piece-position-left: 0;
-    --taken-piece-top-midpoint: 0;
-    --taken-piece-left-midpoint: 0;
-    --taken-piece-left-endpoint: 0;
-    animation-name: captured, rotate;
-    animation-duration: 1.2s, 0.6s;
-    animation-iteration-count: 1, 2;
-    animation-timing-function: linear, linear;
-    animation-fill-mode: forwards, none;
+  --taken-piece-position-top: 0;
+  --taken-piece-position-left: 0;
+  --taken-piece-top-midpoint: 0;
+  --taken-piece-left-midpoint: 0;
+  --taken-piece-left-endpoint: 0;
+  animation-name: captured, rotate;
+  animation-duration: 1.2s, 0.6s;
+  animation-iteration-count: 1, 2;
+  animation-timing-function: linear, linear;
+  animation-fill-mode: forwards, none;
 }
 
 @keyframes captured {
-    25% {
-        top: var(--taken-piece-top-midpoint);
-        left: var(--taken-piece-left-midpoint);
-    }
-    100% {
-        top: 100vh;
-        left: var(--taken-piece-left-endpoint);
-        display: none;
-    }
+  25% {
+    top: var(--taken-piece-top-midpoint);
+    left: var(--taken-piece-left-midpoint);
+  }
+  100% {
+    top: 100vh;
+    left: var(--taken-piece-left-endpoint);
+    display: none;
+  }
 }
 
 @keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .pieceIcon svg {
-    width: var(--piece-size);
-    height: var(--piece-size);
+  width: var(--piece-size);
+  height: var(--piece-size);
 }
 
 .selected {
-    background-color: #c8a3d7;
+  background-color: #c8a3d7;
 }
 
 .legalMove {
-    width: 70%;
-    height: 70%;
-    border-radius: 1rem;
-    border-color: var(--main-color);
-    background-color: transparent;
-    box-shadow: 0px 0px 10px 5px var(--main-color);
+  width: 70%;
+  height: 70%;
+  border-radius: 1rem;
+  border-color: var(--main-color);
+  background-color: transparent;
+  box-shadow: 0px 0px 10px 5px var(--main-color);
 }
 
 .promotion-container {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
 
 .canBeTaken {
-    box-shadow: 0px 0px 10px 2px rgb(166, 12, 12);
+  box-shadow: 0px 0px 10px 2px rgb(166, 12, 12);
 }
 
 .chessboardContainer {
-    position: relative;
-    grid-area: board;
-    display: grid;
-    width: var(--board-size);
-    height: var(--board-size);
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+  position: relative;
+  grid-area: board;
+  display: grid;
+  width: var(--board-size);
+  height: var(--board-size);
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+@media (max-width: 1650px) {
+}
+
+@media (max-width: 1250px) {
+  .gameContainer {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .board-coordinate-letters,
+  .board-coordinate-numbers {
+    display: none;
+  }
+  .chessboardContainer {
+    margin: 0rem 2rem;
+  }
 }

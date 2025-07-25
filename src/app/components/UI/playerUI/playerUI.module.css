@@ -26,7 +26,7 @@
   grid-area: settings;
 }
 
-.player-UI-container:last-of-type {
+.white-player-UI-container {
   align-self: flex-end;
 }
 
@@ -51,17 +51,18 @@
 
 .player-actions-container button {
   padding: 1.5rem 0px;
-  font-size: 2em;
+  font-size: var(--secondary-title);
   border-radius: 0.6em;
   border: none;
 }
 
 .player-clock {
+  position: relative;
   display: grid;
   place-content: center;
   padding: 2rem 0px;
   border-radius: 0.6rem;
-  font-size: 3em;
+  font-size: var(--clock-font-size);
   width: 100%;
 }
 
@@ -73,6 +74,21 @@
 .black-clock {
   background-color: var(--dark-square);
   color: var(--light-square);
+}
+
+.active-clock {
+  box-shadow: 0px 0px 15px #fff;
+}
+
+.inactive-clock::after {
+  content: " ";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0.6rem;
 }
 
 .is-forfeiting {
@@ -88,7 +104,8 @@
 .player-menu-drawing-message {
   display: grid;
   place-content: center;
-  font-size: 1.3em;
+  padding: 1rem 0rem;
+  font-size: clamp(12px, 1vw, 16px);
 }
 
 /* Player profile */
@@ -97,6 +114,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .player-profile-container svg {
@@ -108,14 +126,9 @@
 }
 
 .player-profile-container input {
-  margin: 1rem;
   padding: 1rem 0px;
   text-align: center;
   border-radius: 0.6rem;
-}
-
-.player-menu-drawing-message {
-  padding: 1rem 0rem;
 }
 
 /* Taken Pieces */
@@ -127,12 +140,13 @@
   grid-template-rows: 1fr 1fr;
   grid-gap: 1rem;
   list-style: none;
+  font-size: var(--base-text-size);
 }
 
 .taken-piece-item {
   border-radius: 1rem;
   padding: 5px;
-  box-shadow: 5px 0px 5px #202020;
+  box-shadow: 0px 0px 10px #373737;
 }
 
 .taken-piece-item > div {
@@ -143,15 +157,14 @@
 
 .taken-piece-item span {
   padding: 1rem;
-  font-size: 1.2em;
 }
 
 .taken-piece-item svg {
-  font-size: 2em;
+  font-size: 3rem;
 }
 
 .taken-piece-title {
-  font-size: 2em;
+  font-size: var(--secondary-title);
   align-self: flex-start;
 }
 
@@ -166,7 +179,7 @@
 }
 
 .moves-list-container h3 {
-  font-size: 1.8em;
+  font-size: var(--secondary-title);
 }
 
 .moves-list {
@@ -180,7 +193,7 @@
   padding: 1rem;
   border: 2px solid var(--light-square);
   border-radius: 1rem;
-  font-size: 1.3em;
+  font-size: var(--base-text-size);
   font-weight: bold;
   list-style-type: none;
 }
@@ -205,8 +218,7 @@
 /* Settings */
 
 .settings-container {
-  --title-size: 1.5em;
-  font-size: 1.2em;
+  font-size: var(--base-text-size);
   padding: 2rem;
   border-radius: 1rem;
   background-color: var(--pink-shadow);
@@ -215,9 +227,9 @@
 }
 
 .settings-container form {
-  display: grid;
-  grid-template-rows: 1fr 2fr 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .animation-toggle-container,
@@ -226,41 +238,63 @@
   align-items: center;
 }
 
+.animation-toggle-container {
+  height: fit-content;
+}
+
 .settings-container h3 {
-  font-size: 2.5em;
+  font-size: var(--primary-title);
+  margin-bottom: 1.5rem;
 }
 
 .settings-container h5 {
-  font-size: var(--title-size);
+  font-size: var(--secondary-title);
+}
+
+.settings-container button {
+  padding: 2rem 0px;
+  font-size: var(--base-text-size);
+  font-weight: bold;
+  background-color: transparent;
+  border: solid 2px var(--light-square);
+  border-radius: 1rem;
+  transition: background-color 0.5s, color 0.5s;
+}
+
+.settings-container button:hover {
+  background-color: var(--light-square);
+  color: var(--dark-square);
+}
+
+.time-format-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
 .time-format-container h5 {
   margin-bottom: 1rem;
 }
 
-.checkbox-wrapper-5,
-.time-format-container input {
+.checkbox-wrapper-5 {
   margin-left: 1rem;
 }
 
 .time-format-container > div {
   display: flex;
-  justify-content: space-between;
-}
-
-.time-format-container label {
-  font-size: 1.2em;
+  justify-content: flex-start;
+  gap: 1rem;
 }
 
 .time-format-container input {
-  padding: 0.2rem;
+  width: 5rem;
+  padding: 0.2rem 0px;
   text-align: center;
-  width: 30%;
 }
 
 /* Animations Checkbox styles (credit to David Darnes) */
 .checkbox-wrapper-5 .check {
-  --size: 2.5rem;
+  --size: 2rem;
   position: relative;
   background: linear-gradient(90deg, #f19af3, #f099b5);
   line-height: 0;
@@ -356,4 +390,103 @@
 
 .animation-toggle-container label {
   color: transparent;
+}
+
+/* Media queries */
+
+@media (max-width: 1400px) {
+  .taken-piece-item {
+    padding: 2px 10px;
+  }
+  .taken-piece-item svg {
+    font-size: 2.5rem;
+  }
+  .player-clock {
+    padding: 1rem 0px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .checkbox-wrapper-5 .check {
+    --size: 1.5rem;
+  }
+  .settings-container,
+  .white-player-UI-container,
+  .black-player-UI-container,
+  .moves-list-container {
+    align-self: center;
+  }
+  .settings-container {
+    padding: 1rem;
+  }
+  .settings-container input {
+    padding: 0.1rem 0px;
+  }
+  .player-profile-container input {
+    width: 12rem;
+  }
+  .player-profile-container svg {
+    width: 6rem;
+    height: 6rem;
+  }
+  .time-format-container > div {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .time-format-container > div input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  .settings-container button {
+    padding: 0.5rem;
+  }
+  .moves-list-container li {
+    padding: 0.5rem 0rem;
+  }
+  .player-menu-drawing-message {
+    padding: 0px;
+  }
+  .taken-piece-item svg {
+    font-size: 2rem;
+  }
+  .player-actions-container button {
+    padding: 1rem 0rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .settings-container:not(.show-mobile),
+  .moves-list-container:not(.show-mobile),
+  .taken-piece-container,
+  .player-menu-drawing-message {
+    display: none;
+  }
+  .player-menu-container {
+    display: grid;
+    width: 65vw;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0rem;
+  }
+  .player-profile-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .player-menu-interactables-container {
+    margin: 0px;
+  }
+  .show-mobile {
+    border-radius: 0px;
+    padding: 2rem;
+  }
+  .show-mobile .moves-list {
+    max-height: 45vh;
+  }
+}
+
+@media (max-width: 800px) {
+  .player-menu-container {
+    width: 95vw;
+  }
 }

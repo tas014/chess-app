@@ -6,6 +6,7 @@ import PlayerUIContainer from "./UI/playerUI/PlayerUIContainer";
 import GameEndScreen from "./UI/gameEndScreen/GameEndScreen";
 import Notation from "./UI/playerUI/Notation";
 import Settings from "./UI/playerUI/Settings";
+import MobileTab from "./header/MobileTab";
 import styles from "./Game.module.css";
 import {
   FaChessKnight,
@@ -16,7 +17,14 @@ import {
   FaChessQueen,
 } from "react-icons/fa6";
 
-const Game = () => {
+const Game = ({
+  mobileOpen,
+  setMobileOpen,
+  gameStillOn,
+  setGameStillOn,
+  winner,
+  setWinner,
+}) => {
   const [startingTime, setStartingTime] = useState(300);
   const [startingIncrement, setStartingIncrement] = useState(0);
   const [increment, setIncrement] = useState(startingIncrement);
@@ -72,12 +80,10 @@ const Game = () => {
       color: false,
     },
   ];
-  const [gameStillOn, setGameStillOn] = useState(true);
   const [resetKey, setResetKey] = useState(0);
   const [turn, setTurn] = useState(true);
   const [movesList, setmovesList] = useState([]);
   const [victoryCause, setVictoryCause] = useState(null);
-  const [winner, setWinner] = useState(null);
   const [takenPieces, setTakenPieces] = useState([...initialTakenPieces]);
   const [whiteTime, setWhiteTime] = useState(startingTime);
   const [blackTime, setBlackTime] = useState(startingTime);
@@ -205,6 +211,13 @@ const Game = () => {
         <PlayerUIContainer color={true} key={resetKey}>
           <Notation />
         </PlayerUIContainer>
+        {mobileOpen && (
+          <MobileTab
+            setMobileOpen={setMobileOpen}
+            setGameStillOn={setGameStillOn}
+            winner={winner}
+          />
+        )}
       </GameContext.Provider>
     </section>
   );

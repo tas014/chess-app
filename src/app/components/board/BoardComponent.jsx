@@ -385,7 +385,7 @@ const BoardComponent = () => {
     }
     if (gameEnd.isStalemate) {
       setWinner(null);
-      setVictoryCause("Stalemate. The game is a draw.");
+      setVictoryCause("Stalemate. The game is a draw!");
       setGameStillOn(false);
     }
   };
