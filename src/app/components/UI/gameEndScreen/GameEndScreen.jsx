@@ -3,25 +3,28 @@ import { FaCrown } from "react-icons/fa";
 import { LuSwords } from "react-icons/lu";
 import styles from "./styles.module.css";
 import GameContext from "../../../context/context";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 
 const GameEndScreen = () => {
   const { resetGame, victoryCause, winner } = useContext(GameContext);
   const cause = victoryCause ? victoryCause.split(".") : null;
   const [showModal, setShowModal] = useState(true);
+  const [soundHasPlayed, setSoundHasPlayed] = useState(false);
 
-  const renderDraw = () => {
-    const sound = new Audio("/audio/draw.mp3");
-    sound.volume = 0.5;
-    sound.play().catch((err) => console.log(err));
-    return <LuSwords />;
-  };
-  const renderWin = () => {
-    const sound = new Audio("/audio/victory.mp3");
-    sound.volume = 0.3;
-    sound.play().catch((err) => console.log(err));
-    return <FaCrown />;
-  };
+  useEffect(() => {
+    if (winner !== null && !soundHasPlayed) {
+      const sound = new Audio("/audio/victory.mp3");
+      sound.volume = 0.3;
+      sound.play().catch((err) => console.warn(err));
+      setSoundHasPlayed(true);
+    } else if (!soundHasPlayed) {
+      const sound = new Audio("/audio/draw.mp3");
+      sound.volume = 0.5;
+      sound.play().catch((err) => console.warn(err));
+      setSoundHasPlayed(true);
+    }
+  }, [winner]);
+
   return (
     <div
       className={`${styles["end-screen-container"]} ${
@@ -31,7 +34,7 @@ const GameEndScreen = () => {
       <div>
         <div className={styles["end-screen-content"]}>
           <div className={winner === null ? styles["draw-icon"] : ""}>
-            {winner !== null ? renderWin() : renderDraw()}
+            {winner !== null ? <FaCrown /> : <LuSwords />}
           </div>
           <h3>
             {cause[0]}.<br />
