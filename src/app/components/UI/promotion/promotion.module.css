@@ -111,3 +111,31 @@
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
 }
+
+@media (max-width: 1650px) {
+  .promotion-container {
+    --animation-height: 35rem;
+    --animation-width: 35rem;
+  }
+}
+
+@media (max-width: 1250px) {
+  .promotion-container {
+    --animation-height: 25rem;
+    --animation-width: 25rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .promotion-container {
+    --animation-height: 30rem;
+    --animation-width: 30rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .promotion-container {
+    --animation-height: 40vw;
+    --animation-width: 40vw;
+  }
+}

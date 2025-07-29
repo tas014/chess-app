@@ -20,7 +20,7 @@ import {
 import { useState, useEffect, useRef, useContext } from "react";
 import GameContext from "../../context/context";
 
-const BoardComponent = () => {
+const BoardComponent = ({ mobileOpen, setPreventResume }) => {
   const {
     username,
     gameStillOn,
@@ -198,7 +198,6 @@ const BoardComponent = () => {
                   );
                   break;
               }
-              console.log(newElement, promotedTo);
               fromPiece.element = newElement;
             }
             break;
@@ -364,7 +363,6 @@ const BoardComponent = () => {
       } else {
         setBlackTime((prev) => (prev += increment));
       }
-      console.log(increment);
       setTurn(!turn);
     } else {
       clearLegalMoves();
@@ -373,7 +371,6 @@ const BoardComponent = () => {
 
     const gameEnd = isGameOver(!turn, gameMatrix);
     if (gameEnd.isMate) {
-      console.log(username);
       if (turn) {
         setWinner("White");
         setVictoryCause(`Checkmate. ${username["white"]} is victorious!`);
@@ -540,6 +537,7 @@ const BoardComponent = () => {
         promotionFlag = !promotionFlag;
         setGameStillOn(!gameStillOn);
         if (promotingPiece) {
+          setPreventResume(false);
           queeningPiece =
             matrix[previousSquare.x][previousSquare.y] > 0
               ? promotingPiece
@@ -559,6 +557,8 @@ const BoardComponent = () => {
             checkmateObj.isMate,
             promotingPiece
           );
+        } else {
+          setPreventResume(true);
         }
         setSelectedPiece(null);
         break;
@@ -640,7 +640,7 @@ const BoardComponent = () => {
       <div className={styles.chessboardContainer} id="board" ref={boardRef}>
         {matrixMap()}
         {piecesMap()}
-        {!gameStillOn && isPromoting ? (
+        {!gameStillOn && isPromoting && !mobileOpen ? (
           <div className={styles["promotion-container"]}>
             <PromotionScreen
               handleSpecialMove={handleSpecialMove}

@@ -14,35 +14,22 @@ const PromotionScreen = ({
   active,
 }) => {
   eventMove.event = "promotion";
+  const handleClick = (pieceCode) => {
+    handleSpecialMove(matrix, eventMove, pieceCode);
+  };
   return (
     <div className={styles["promotion-container"]}>
       <ul className={styles["promotion-list"]}>
-        <li
-          onClick={() => {
-            handleSpecialMove(matrix, eventMove, 3);
-          }}
-        >
+        <li onClick={() => handleClick(3)}>
           <FaChessKnight color={color ? "white" : "black"} />
         </li>
-        <li
-          onClick={() => {
-            handleSpecialMove(matrix, eventMove, 4);
-          }}
-        >
+        <li onClick={() => handleClick(4)}>
           <FaChessBishop color={color ? "white" : "black"} />
         </li>
-        <li
-          onClick={() => {
-            handleSpecialMove(matrix, eventMove, 9);
-          }}
-        >
+        <li onClick={() => handleClick(9)}>
           <FaChessQueen color={color ? "white" : "black"} />
         </li>
-        <li
-          onClick={() => {
-            handleSpecialMove(matrix, eventMove, 5);
-          }}
-        >
+        <li onClick={() => handleClick(5)}>
           <FaChessRook color={color ? "white" : "black"} />
         </li>
         <div className={active ? styles["animated-lines"] : ""}></div>

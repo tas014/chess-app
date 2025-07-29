@@ -50,6 +50,7 @@
 
 /* Tabs */
 .mobile-container-background {
+  z-index: 10;
   position: fixed;
   display: flex;
   justify-content: flex-end;

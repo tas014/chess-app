@@ -4,7 +4,12 @@ import Settings from "../UI/playerUI/Settings";
 import Notation from "../UI/playerUI/Notation";
 import { useState } from "react";
 
-const MobileTab = ({ setMobileOpen, setGameStillOn, winner }) => {
+const MobileTab = ({
+  setMobileOpen,
+  setGameStillOn,
+  winner,
+  preventResume,
+}) => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [tabDisplayed, setTabDisplayed] = useState(null);
 
@@ -16,7 +21,7 @@ const MobileTab = ({ setMobileOpen, setGameStillOn, winner }) => {
     <div
       className={styles["mobile-container-background"]}
       onClick={(e) => {
-        if (winner === null) setGameStillOn(true);
+        if (winner === null && !preventResume) setGameStillOn(true);
         setMobileOpen(false);
       }}
     >

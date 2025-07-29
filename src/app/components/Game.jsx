@@ -3,7 +3,6 @@ import GameContext from "../context/context";
 import { useState, useCallback, useEffect } from "react";
 import BoardComponent from "./board/BoardComponent";
 import PlayerUIContainer from "./UI/playerUI/PlayerUIContainer";
-import GameEndScreen from "./UI/gameEndScreen/GameEndScreen";
 import Notation from "./UI/playerUI/Notation";
 import Settings from "./UI/playerUI/Settings";
 import MobileTab from "./header/MobileTab";
@@ -13,7 +12,6 @@ import {
   FaChessBishop,
   FaChessPawn,
   FaChessRook,
-  FaChessKing,
   FaChessQueen,
 } from "react-icons/fa6";
 
@@ -24,6 +22,8 @@ const Game = ({
   setGameStillOn,
   winner,
   setWinner,
+  preventResume,
+  setPreventResume,
 }) => {
   const [startingTime, setStartingTime] = useState(300);
   const [startingIncrement, setStartingIncrement] = useState(0);
@@ -206,7 +206,11 @@ const Game = ({
           <Settings />
         </PlayerUIContainer>
         <div className={styles["board-container"]}>
-          <BoardComponent key={resetKey} />
+          <BoardComponent
+            mobileOpen={mobileOpen}
+            setPreventResume={setPreventResume}
+            key={resetKey}
+          />
         </div>
         <PlayerUIContainer color={true} key={resetKey}>
           <Notation />
@@ -216,6 +220,7 @@ const Game = ({
             setMobileOpen={setMobileOpen}
             setGameStillOn={setGameStillOn}
             winner={winner}
+            preventResume={preventResume}
           />
         )}
       </GameContext.Provider>

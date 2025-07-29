@@ -172,9 +172,6 @@
   grid-template-rows: repeat(8, 1fr);
 }
 
-@media (max-width: 1650px) {
-}
-
 @media (max-width: 1250px) {
   .gameContainer {
     gap: 0.5rem;
