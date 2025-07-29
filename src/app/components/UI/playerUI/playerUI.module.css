@@ -126,9 +126,14 @@
 }
 
 .player-profile-container input {
+  width: 100%;
   padding: 1rem 0px;
   text-align: center;
   border-radius: 0.6rem;
+}
+
+.player-profile-container h3 {
+  width: 50%;
 }
 
 /* Taken Pieces */
@@ -179,7 +184,7 @@
 }
 
 .moves-list-container h3 {
-  font-size: var(--secondary-title);
+  font-size: var(--primary-title);
 }
 
 .moves-list {
@@ -422,9 +427,6 @@
   .settings-container input {
     padding: 0.1rem 0px;
   }
-  .player-profile-container input {
-    width: 12rem;
-  }
   .player-profile-container svg {
     width: 6rem;
     height: 6rem;
@@ -436,9 +438,6 @@
   .time-format-container > div input {
     width: 100%;
     margin-bottom: 0.5rem;
-  }
-  .settings-container button {
-    padding: 0.5rem;
   }
   .moves-list-container li {
     padding: 0.5rem 0rem;
@@ -483,10 +482,16 @@
   .show-mobile .moves-list {
     max-height: 45vh;
   }
+  .player-profile-container h3 {
+    width: 70%;
+  }
 }
 
 @media (max-width: 800px) {
   .player-menu-container {
     width: 95vw;
+  }
+  .time-format-container input {
+    text-align: start;
   }
 }
