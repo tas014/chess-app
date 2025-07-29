@@ -70,6 +70,11 @@ const BoardComponent = ({ mobileOpen, setPreventResume }) => {
     event: null,
   });
   const boardRef = useRef(null);
+  // Audios
+  const playMoveSound = () =>
+    new Audio("/audio/pieceMove.mp3").play().catch((err) => console.log(err));
+  const playCaptureSound = () =>
+    new Audio("/audio/pieceTakes.mp3").play().catch((err) => console.log(err));
 
   const initiatePieces = () => {
     const pieceArray = [];
@@ -134,6 +139,8 @@ const BoardComponent = ({ mobileOpen, setPreventResume }) => {
     };
   }, [setBoardSize]);
 
+  useEffect(() => {}, []);
+
   const generateSquareColor = (row, square) => {
     if ((row + square) % 2 === 0) {
       return true;
@@ -142,6 +149,7 @@ const BoardComponent = ({ mobileOpen, setPreventResume }) => {
   };
 
   const updatePiece = (from, to, event, promotedTo = null) => {
+    let captureFlag = false;
     const newPieces = pieces
       .map((piece) => ({ ...piece }))
       .filter((piece) => !piece.wasTaken);
@@ -172,6 +180,8 @@ const BoardComponent = ({ mobileOpen, setPreventResume }) => {
         )[0];
         takenPiece.wasTaken = true;
         addToTakenPieces(takenPiece);
+        playCaptureSound();
+        captureFlag = true;
       }
       // Handle events
       if (event) {
@@ -223,6 +233,8 @@ const BoardComponent = ({ mobileOpen, setPreventResume }) => {
               if (enPassantIndex !== -1) {
                 newPieces[enPassantIndex].wasTaken = true;
                 addToTakenPieces(newPieces[enPassantIndex]);
+                playCaptureSound();
+                captureFlag = true;
               } else
                 console.warn(
                   "No piece found at the en passant position to remove."
@@ -282,6 +294,7 @@ const BoardComponent = ({ mobileOpen, setPreventResume }) => {
         }
       }
       setPieces(newPieces);
+      if (!captureFlag) playMoveSound();
     } else console.warn("No piece found at the specified position to update.");
   };
 
