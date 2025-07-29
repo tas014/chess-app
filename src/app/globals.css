@@ -89,6 +89,15 @@ button {
   }
 }
 
+@media (max-width: 1400px) {
+  :root {
+    --base-text-size: 1.4rem;
+    --primary-title: 2.5rem;
+    --secondary-title: 1.8rem;
+    --clock-font-size: 2rem;
+  }
+}
+
 @media (max-width: 1250px) {
   :root {
     --base-text-size: 1.4rem;

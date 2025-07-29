@@ -400,14 +400,32 @@
 /* Media queries */
 
 @media (max-width: 1400px) {
-  .taken-piece-item {
-    padding: 2px 10px;
+  .taken-piece-item span {
+    padding: 0.5rem;
   }
   .taken-piece-item svg {
     font-size: 2.5rem;
   }
   .player-clock {
     padding: 1rem 0px;
+  }
+  .taken-piece-item svg {
+    font-size: 2rem;
+  }
+  .player-profile-container svg {
+    font-size: 6em;
+  }
+  .player-actions-container button {
+    padding: 1rem 0rem;
+  }
+  .moves-list-container li {
+    padding: 0.5rem 0rem;
+  }
+  .player-menu-container {
+    gap: 0px;
+  }
+  .time-format-container button {
+    padding: 1.5rem 0rem;
   }
 }
 
@@ -438,9 +456,6 @@
   .time-format-container > div input {
     width: 100%;
     margin-bottom: 0.5rem;
-  }
-  .moves-list-container li {
-    padding: 0.5rem 0rem;
   }
   .player-menu-drawing-message {
     padding: 0px;

@@ -26,7 +26,13 @@
 
 @media (max-width: 1400px) {
   .main-container {
-    --board-size: 60rem;
+    --board-size: 50rem;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 27rem auto 27rem;
+    grid-template-areas:
+      "black-menu board notation"
+      "settings board white-menu";
+    align-items: center;
   }
 }
 
@@ -40,7 +46,9 @@
 @media (max-width: 1024px) {
   .main-container {
     --board-size: 65vw;
+    align-items: normal;
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     grid-template-areas:
       "black-menu"
       "board"
